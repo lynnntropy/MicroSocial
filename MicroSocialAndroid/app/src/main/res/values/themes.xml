@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MicroSocial" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- colorPrimary is used for the default action bar background -->
+        <item name="colorPrimary">#3F51B5</item>
+
+        <!-- colorPrimaryDark is used for the status bar -->
+        <item name="colorPrimaryDark">#303F9F</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated
+             which is used to tint widgets -->
+        <item name="colorAccent">#212121</item>
+
+        <!-- You can also set colorControlNormal, colorControlActivated
+             colorControlHighlight & colorSwitchThumbNormal. -->
+
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
+    <style name="Theme.MicroSocial.Tabs" parent="Theme.MicroSocial">
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
+    <color name="white">#fff</color>
+    <color name="red_button">#f00</color>
+
+    <color name="primary_blue">#3F51B5</color>
+    <color name="primary_blue_dark">#303F9F</color>
+    <color name="text_color_white">#eee</color>
+    <color name="text_color_dark">#212121   </color>
+
+</resources>

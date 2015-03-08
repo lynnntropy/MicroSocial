@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="me.omegavesko.microsocial.android.alpha" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.MicroSocial" >
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+
+        <activity
+            android:name=".activity.ConnectActivity"
+            android:label="Find a Network" >
+        </activity>
+
+        <activity
+            android:name=".activity.UserActivity"
+            android:label="User Information" >
+        </activity>
+
+        <activity
+            android:name=".activity.MessageActivity"
+            android:label="@string/title_activity_message"
+            android:parentActivityName=".activity.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".activity.ReconnectActivity"
+            android:label="MicroSocial" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>
