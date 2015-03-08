@@ -7,3 +7,14 @@ C:\Users\Veselin\Development\MicroSocialServer\MicroSocialServer\bin\Debug\Newto
 C:\Users\Veselin\Development\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.csprojResolveAssemblyReference.cache
 C:\Users\Veselin\Development\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.exe
 C:\Users\Veselin\Development\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.pdb
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\MicroSocialServer.exe.config
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.exe
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.pdb
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\MicroSocialServer.exe
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\MicroSocialServer.pdb
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\GrapevinePlus.dll
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.csprojResolveAssemblyReference.cache
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\System.Data.SQLite.dll
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\System.Data.SQLite.xml
