@@ -164,10 +164,13 @@ namespace MicroSocialServer
                 reader.Read();
                 var user = new User();
                 user.username = (string) reader["username"];
+
+                reader.Close();
                 return user;
             }
             else
             {
+                reader.Close();
                 return null;
             }
         }
@@ -215,6 +218,58 @@ namespace MicroSocialServer
 
             reader.Close();
             return statuses;
+        }
+
+        // MESSAGE MANAGEMENT
+
+        public void AddMessage(Message message)
+        {
+            var sql = String.Format(
+                "INSERT INTO Messages (fromUser, toUser, time, message) VALUES ('{0}', '{1}', DATETIME('NOW'), '{2}')",
+                message.senderName, message.recipientName, message.messageBody
+                );
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            command.ExecuteNonQuery();
+        }
+
+        public List<Message> GetMessages(string user1, string user2, int first, int last)
+        {
+            var messages = new List<Message>();
+
+            var sql = String.Format(
+                //"SELECT * FROM Messages WHERE (from='{0}' AND to='{1}') OR (from='{1}' AND to='{0}') ORDER BY ID DESC LIMIT {2}",
+                  //WHERE (from = '{0}' AND to = '{1}')
+                  //OR (from = '{1}' AND to = '{0}') 
+                @"SELECT *
+                  FROM Messages 
+                  WHERE (fromUser = '{0}' AND toUser = '{1}')
+                  OR (fromUser = '{1}' AND toUser = '{0}') 
+                  ORDER BY ID DESC 
+                  LIMIT {2}",
+                user1, user2, first + last + 1
+                );
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            var reader = command.ExecuteReader();
+
+            int i = 0;
+            while (reader.Read())
+            {
+                var message = new Message();
+                message.senderName = (string) reader["fromUser"];
+                message.recipientName = (string) reader["toUser"];
+                message.time = (DateTime) reader["time"];
+                message.messageBody = (string) reader["message"];
+
+                if (i >= first)
+                    messages.Add(message);
+
+                i++;
+            }
+
+            reader.Close();
+            return messages;
         }
     }
 }
