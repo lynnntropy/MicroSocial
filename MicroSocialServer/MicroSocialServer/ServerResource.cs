@@ -17,26 +17,6 @@ namespace MicroSocialServer
 {
     public sealed class ServerResource : RESTResource
     {
-        [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/hello")]
-        public void SayHello(HttpListenerContext context)
-        {
-            //this.SendTextResponse(context, String.Format("Hello World! It's {0} here!", DateTime.Now.TimeOfDay));
-
-            Console.WriteLine(context.Request.ToString());
-
-            //this.SendTextResponse(context, String.Format("Hello World! It's {0} here!", DateTime.Now.TimeOfDay));
-            this.SendTextResponse(context, context.Request.QueryString.ToString());
-        }
-
-        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/helloPost")]
-        public void SayHelloPost(HttpListenerContext context)
-        {
-            JObject jsonPayload = GetJsonPayload(context.Request);
-
-            if (jsonPayload != null) this.SendTextResponse(context, jsonPayload.ToString());
-            else this.SendTextResponse(context, "Payload is null.");
-        }
-
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/register")]
         public void RegisterUser(HttpListenerContext context)
         {
@@ -75,6 +55,68 @@ namespace MicroSocialServer
             response["users"] = JToken.FromObject(users);
 
             this.SendJsonResponse(context, response);
+        }
+
+        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session")]
+        public void CreateSession(HttpListenerContext context)
+        {
+            JObject jsonPayload = GetJsonPayload(context.Request);
+
+            String username = jsonPayload.GetValue("username").ToString();
+            String password = jsonPayload.GetValue("password").ToString();
+
+            DatabaseManager dbManager = new DatabaseManager();
+            dbManager.Connect();
+
+            if (dbManager.CheckPassword(username, password))
+            {
+                int sessionId = dbManager.AddSession(username);
+                dbManager.Close();
+
+                JObject response = new JObject();
+                response["session_id"] = JToken.FromObject(sessionId);
+
+                
+                this.SendJsonResponse(context, response);
+            }
+            else
+            {
+                dbManager.Close();
+
+                context.Response.StatusCode = 401; // 401 Unauthorized
+                this.SendTextResponse(context, "Unauthorized");
+            }
+        }
+
+        [RESTRoute(Method = HttpMethod.DELETE, PathInfo = @"^/session")]
+        public void EndSession(HttpListenerContext context)
+        {
+            JObject jsonPayload = GetJsonPayload(context.Request);
+
+            String username = jsonPayload.GetValue("username").ToString();
+            int sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
+
+            DatabaseManager dbManager = new DatabaseManager();
+            dbManager.Connect();
+
+            if (dbManager.CheckSession(username, sessionId))
+            {
+                // TODO!
+                dbManager.DeleteSession(username);
+
+                dbManager.Close();
+
+                context.Response.StatusCode = 200; // 200 OK
+                this.SendTextResponse(context, String.Format("Session ended for user {0}", username));
+
+            }
+            else
+            {
+                dbManager.Close();
+
+                context.Response.StatusCode = 401; // 401 Unauthorized
+                this.SendTextResponse(context, "Unauthorized");
+            }
         }
     }
 }

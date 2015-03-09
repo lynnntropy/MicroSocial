@@ -61,8 +61,6 @@ namespace MicroSocialServer
                 users.Add(new User((string)reader["username"]));
             }
 
-
-
             return users;
         }
 
@@ -78,8 +76,87 @@ namespace MicroSocialServer
             reader.Read();
             string hashedPassword = (string)reader["password_hash"];
 
+            reader.Close();
+
             return BCrypt.Net.BCrypt.Verify(plaintextPassword, hashedPassword);
         }
 
+        public bool CheckSession(string username, int sessionId)
+        {
+            string sqlQuery = String.Format(
+                "SELECT * FROM Sessions WHERE username=\"{0}\" AND session_id={1}",
+                username, sessionId);
+
+            SQLiteCommand command = new SQLiteCommand(sqlQuery, databaseConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            bool hasRows = reader.HasRows;
+            reader.Close();
+
+            return hasRows;
+        }
+
+        public int AddSession(string username)
+        {
+            string findOldDataQuery = String.Format(
+                "SELECT * FROM Sessions WHERE username=\"{0}\"",
+                username
+                );
+
+            SQLiteCommand findCommand = new SQLiteCommand(findOldDataQuery, databaseConnection);
+            var findReader = findCommand.ExecuteReader();
+
+            if (findReader.HasRows)
+            {
+                string removeOldDataQuery = String.Format(
+                    "DELETE FROM Sessions WHERE username=\"{0}\"",
+                    username
+                    );
+
+                SQLiteCommand deleteCommand = new SQLiteCommand(removeOldDataQuery, databaseConnection);
+                deleteCommand.ExecuteNonQuery();
+            }
+
+            findReader.Close();
+
+            string sqlCommand = String.Format(
+                "INSERT INTO Sessions (username) VALUES ('{0}');",
+                username
+                );
+
+            SQLiteCommand command = new SQLiteCommand(sqlCommand, databaseConnection);
+            int rowsAffected = command.ExecuteNonQuery();
+
+            if (rowsAffected > 0)
+            {
+                string sqlQuery = String.Format(
+                    "SELECT * FROM Sessions WHERE username=\"{0}\"",
+                    username);
+
+                SQLiteCommand query = new SQLiteCommand(sqlQuery, databaseConnection);
+                SQLiteDataReader reader = query.ExecuteReader();
+
+                reader.Read();
+                int sessionId = reader.GetInt32(1);
+                reader.Close();
+                //return (int)reader["session_id"];
+                return sessionId;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public void DeleteSession(string username)
+        {
+            string removeOldDataQuery = String.Format(
+                    "DELETE FROM Sessions WHERE username=\"{0}\"",
+                    username
+                    );
+
+            SQLiteCommand deleteCommand = new SQLiteCommand(removeOldDataQuery, databaseConnection);
+            deleteCommand.ExecuteNonQuery();
+        }
     }
 }
