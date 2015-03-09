@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Grapevine;
+using Grapevine.Server;
+using System.Net;
+using System.Runtime.CompilerServices;
+using Newtonsoft.Json.Linq;
+using MicroSocialServer.Schema;
+
+using System.Text.RegularExpressions;
+
+namespace MicroSocialServer.Resources
+{
+    public sealed class MessagesResource : RESTResource
+    {
+        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/message$")]
+        public void SendMessage(HttpListenerContext context)
+        {
+            var jsonPayload = GetJsonPayload(context.Request);
+            var sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
+
+            var dbManager = new DatabaseManager();
+            dbManager.Connect();
+
+            if (dbManager.CheckSession(sessionId))
+            {
+                //var from = jsonPayload.GetValue("from").ToString();
+                var from = dbManager.GetUserFromSession(sessionId).username;
+                var to = jsonPayload.GetValue("to").ToString();
+                var messageBody = jsonPayload.GetValue("message").ToString();
+
+                var message = new Message(messageBody, DateTime.Now, from, to);
+                dbManager.AddMessage(message);
+
+                dbManager.Close();
+                this.SendTextResponse(context, "OK");
+            }
+            else
+            {
+                dbManager.Close();
+                context.Response.StatusCode = 401;
+                this.SendTextResponse(context, "Nope.");
+            }
+        }
+
+        [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/messages\?session=\S+&user=\S+&first=\d+&last=\d+$")]
+        public void GetMessages(HttpListenerContext context)
+        {
+            // we know the GET parameters were passed because otherwise the regex wouldn't match
+
+            //var jsonPayload = GetJsonPayload(context.Request);
+            //var sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
+
+            var dbManager = new DatabaseManager();
+            dbManager.Connect();
+
+            
+            //string regex = @"^/messages\?first=(?<first>\d+)&last=(?<last>\d+)$";
+            var regex =
+                @"^/messages\?session=(?<session>\S+)&user=(?<user>\S+)&first=(?<first>\d+)&last=(?<last>\d+)$";
+
+            Match match = Regex.Match(context.Request.RawUrl, regex);
+            if (match.Success)
+            {
+                var session = int.Parse(match.Groups["session"].Value);
+                    
+                if (dbManager.CheckSession(session))
+                {
+                    var user1 = dbManager.GetUserFromSession(session).username;
+                    var user2 = match.Groups["user"].Value;
+                    int first = int.Parse(match.Groups["first"].Value);
+                    int last = int.Parse(match.Groups["last"].Value);
+
+                    var messages = dbManager.GetMessages(user1, user2, first, last);
+
+                    var json = new JObject();
+                    json["user1"] = JToken.FromObject(user1);
+                    json["user2"] = JToken.FromObject(user2);
+                    json["first"] = JToken.FromObject(first);
+                    json["last"] = JToken.FromObject(last);
+                    json["messages"] = JToken.FromObject(messages);
+
+                    dbManager.Close();
+                    this.SendJsonResponse(context, json);
+                }
+                else
+            {
+                dbManager.Close();
+                context.Response.StatusCode = 401;
+                this.SendTextResponse(context, "Nope.");
+            }
+            }
+            else
+            {
+                dbManager.Close();
+                this.SendTextResponse(context,
+                    "Grapevine dun goofed if you got this far..");
+            }
+            
+        }
+    }
+}
