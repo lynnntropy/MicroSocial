@@ -18,3 +18,6 @@ C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\obj\Debug\MicroSocialServer.csprojResolveAssemblyReference.cache
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\System.Data.SQLite.dll
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\System.Data.SQLite.xml
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.dll
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.pdb
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.xml

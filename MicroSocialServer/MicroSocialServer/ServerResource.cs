@@ -10,6 +10,8 @@ using System.Net;
 
 using Newtonsoft.Json.Linq;
 
+using MicroSocialServer.Schema;
+
 
 namespace MicroSocialServer
 {
@@ -41,7 +43,9 @@ namespace MicroSocialServer
             JObject jsonPayload = GetJsonPayload(context.Request);
 
             String username = jsonPayload.GetValue("username").ToString();
-            String passwordHash = jsonPayload.GetValue("passwordHash").ToString();
+            String password = jsonPayload.GetValue("password").ToString();
+
+            String passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
             if (username != null && passwordHash != null)
             {
@@ -56,6 +60,21 @@ namespace MicroSocialServer
             { 
                 this.SendTextResponse(context, "No valid user received.");
             }
+        }
+
+        [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/getUsers")]
+        public void GetUsers(HttpListenerContext context)
+        {
+            DatabaseManager dbManager = new DatabaseManager();
+            dbManager.Connect();
+            List<User> users = dbManager.GetUsers();
+            dbManager.Close();
+
+            JObject response = new JObject();
+            //response.Add("users", Newtonsoft.Json.JsonConvert.SerializeObject(users));
+            response["users"] = JToken.FromObject(users);
+
+            this.SendJsonResponse(context, response);
         }
     }
 }
