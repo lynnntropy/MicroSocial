@@ -15,7 +15,7 @@ using MicroSocialServer.Schema;
 
 namespace MicroSocialServer
 {
-    public sealed class ServerResource : RESTResource
+    public sealed class UserResource : RESTResource
     {
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/register")]
         public void RegisterUser(HttpListenerContext context)
@@ -99,7 +99,7 @@ namespace MicroSocialServer
             DatabaseManager dbManager = new DatabaseManager();
             dbManager.Connect();
 
-            if (dbManager.CheckSession(username, sessionId))
+            if (dbManager.CheckSession(sessionId))
             {
                 // TODO!
                 dbManager.DeleteSession(username);

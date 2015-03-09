@@ -15,6 +15,11 @@ namespace MicroSocialServer.Schema
         [JsonIgnore]
         public string passwordHash;
 
+        public User()
+        {
+            
+        }
+
         public User(string username)
         {
             this.username = username;

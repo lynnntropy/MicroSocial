@@ -1,64 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System.Data.SQLite;
-
+using System.Runtime.InteropServices;
 using MicroSocialServer.Schema;
 
 namespace MicroSocialServer
 {
-    
-    class DatabaseManager
+    internal class DatabaseManager
     {
-        static string databaseFilename = "database.db";
-        SQLiteConnection databaseConnection;
-
-        public DatabaseManager()
-        {
-
-        }
+        private const string DatabaseFilename = "database.db";
+        private SQLiteConnection _databaseConnection;
 
         public void Connect()
         {
-            this.databaseConnection = new SQLiteConnection("Data Source=" + databaseFilename + ";Version=3;");
-            this.databaseConnection.Open();
+            _databaseConnection = new SQLiteConnection("Data Source=" + DatabaseFilename + ";Version=3;");
+            _databaseConnection.Open();
         }
 
         public void Close()
         {
-            if (this.databaseConnection != null)
+            if (_databaseConnection != null)
             {
-                this.databaseConnection.Close();
+                _databaseConnection.Close();
             }
         }
 
+        // USER MANAGEMENT
+
         public void AddUser(string username, string passwordHash)
         {
-            string sqlCommand = String.Format(
+            var sqlCommand = String.Format(
                 "INSERT INTO Users VALUES ('{0}', '{1}');",
                 username, passwordHash
                 );
 
-            SQLiteCommand command = new SQLiteCommand(sqlCommand, databaseConnection);
-            int rowsAffected = command.ExecuteNonQuery();
+            var command = new SQLiteCommand(sqlCommand, _databaseConnection);
+            command.ExecuteNonQuery();
         }
 
         public List<User> GetUsers()
         {
-            List<User> users = new List<User>();
+            var users = new List<User>();
 
-            string sqlQuery =
+            var sqlQuery =
                 "SELECT * FROM Users ORDER BY username ASC";
 
-            SQLiteCommand command = new SQLiteCommand(sqlQuery, databaseConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var command = new SQLiteCommand(sqlQuery, _databaseConnection);
+            var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
-                users.Add(new User((string)reader["username"]));
+                users.Add(new User((string) reader["username"]));
             }
 
             return users;
@@ -66,31 +58,33 @@ namespace MicroSocialServer
 
         public bool CheckPassword(string username, string plaintextPassword)
         {
-            string sqlQuery = String.Format(
+            var sqlQuery = String.Format(
                 "SELECT * FROM Users WHERE username=\"{0}\"",
                 username);
 
-            SQLiteCommand command = new SQLiteCommand(sqlQuery, databaseConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var command = new SQLiteCommand(sqlQuery, _databaseConnection);
+            var reader = command.ExecuteReader();
 
             reader.Read();
-            string hashedPassword = (string)reader["password_hash"];
+            var hashedPassword = (string) reader["password_hash"];
 
             reader.Close();
 
             return BCrypt.Net.BCrypt.Verify(plaintextPassword, hashedPassword);
         }
 
-        public bool CheckSession(string username, int sessionId)
+        // SESSION MANAGEMENT
+
+        public bool CheckSession(int sessionId)
         {
-            string sqlQuery = String.Format(
-                "SELECT * FROM Sessions WHERE username=\"{0}\" AND session_id={1}",
-                username, sessionId);
+            var sqlQuery = String.Format(
+                "SELECT * FROM Sessions WHERE session_id={0}",
+                sessionId);
 
-            SQLiteCommand command = new SQLiteCommand(sqlQuery, databaseConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var command = new SQLiteCommand(sqlQuery, _databaseConnection);
+            var reader = command.ExecuteReader();
 
-            bool hasRows = reader.HasRows;
+            var hasRows = reader.HasRows;
             reader.Close();
 
             return hasRows;
@@ -98,65 +92,129 @@ namespace MicroSocialServer
 
         public int AddSession(string username)
         {
-            string findOldDataQuery = String.Format(
+            var findOldDataQuery = String.Format(
                 "SELECT * FROM Sessions WHERE username=\"{0}\"",
                 username
                 );
 
-            SQLiteCommand findCommand = new SQLiteCommand(findOldDataQuery, databaseConnection);
+            var findCommand = new SQLiteCommand(findOldDataQuery, _databaseConnection);
             var findReader = findCommand.ExecuteReader();
 
             if (findReader.HasRows)
             {
-                string removeOldDataQuery = String.Format(
+                var removeOldDataQuery = String.Format(
                     "DELETE FROM Sessions WHERE username=\"{0}\"",
                     username
                     );
 
-                SQLiteCommand deleteCommand = new SQLiteCommand(removeOldDataQuery, databaseConnection);
+                var deleteCommand = new SQLiteCommand(removeOldDataQuery, _databaseConnection);
                 deleteCommand.ExecuteNonQuery();
             }
 
             findReader.Close();
 
-            string sqlCommand = String.Format(
+            var sqlCommand = String.Format(
                 "INSERT INTO Sessions (username) VALUES ('{0}');",
                 username
                 );
 
-            SQLiteCommand command = new SQLiteCommand(sqlCommand, databaseConnection);
-            int rowsAffected = command.ExecuteNonQuery();
+            var command = new SQLiteCommand(sqlCommand, _databaseConnection);
+            var rowsAffected = command.ExecuteNonQuery();
 
             if (rowsAffected > 0)
             {
-                string sqlQuery = String.Format(
+                var sqlQuery = String.Format(
                     "SELECT * FROM Sessions WHERE username=\"{0}\"",
                     username);
 
-                SQLiteCommand query = new SQLiteCommand(sqlQuery, databaseConnection);
-                SQLiteDataReader reader = query.ExecuteReader();
+                var query = new SQLiteCommand(sqlQuery, _databaseConnection);
+                var reader = query.ExecuteReader();
 
                 reader.Read();
-                int sessionId = reader.GetInt32(1);
+                var sessionId = reader.GetInt32(1);
                 reader.Close();
                 //return (int)reader["session_id"];
                 return sessionId;
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         public void DeleteSession(string username)
         {
-            string removeOldDataQuery = String.Format(
-                    "DELETE FROM Sessions WHERE username=\"{0}\"",
-                    username
-                    );
+            var removeOldDataQuery = String.Format(
+                "DELETE FROM Sessions WHERE username=\"{0}\"",
+                username
+                );
 
-            SQLiteCommand deleteCommand = new SQLiteCommand(removeOldDataQuery, databaseConnection);
+            var deleteCommand = new SQLiteCommand(removeOldDataQuery, _databaseConnection);
             deleteCommand.ExecuteNonQuery();
+        }
+
+        public User GetUserFromSession(int session)
+        {
+            var sql = String.Format(
+                "SELECT * FROM Sessions WHERE session_id={0}",
+                session);
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+                var user = new User();
+                user.username = (string) reader["username"];
+                return user;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        // STATUS MANAGEMENT
+
+        public void AddStatus(Status status)
+        {
+            var sql = String.Format(
+                "INSERT INTO Statuses (username, time, status_body) VALUES ('{0}', DATETIME('NOW'), '{1}')",
+                status.poster, status.statusContent
+            );
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            command.ExecuteNonQuery();
+        }
+
+        public List<Status> GetStatuses(int first, int last)
+        {
+            var statuses = new List<Status>();
+
+            var sql = String.Format(
+                "SELECT * FROM Statuses ORDER BY ID DESC LIMIT {0}",
+                first + last + 1
+                );
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            var reader = command.ExecuteReader();
+
+            int i = 0;
+            while (reader.Read())
+            {
+                var newStatus = new Status();
+                newStatus.poster = (string) reader["username"];
+                newStatus.statusContent = (string) reader["status_body"];
+                // TODO - sort out a way to retrieve date time values from the db
+                //newStatus.time = DateTime.Parse((string) reader["time"]);
+                newStatus.time = (DateTime) reader["time"];
+
+                if (i >= first)
+                    statuses.Add(newStatus);
+
+                i++;
+            }
+
+            reader.Close();
+            return statuses;
         }
     }
 }
