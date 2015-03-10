@@ -60,6 +60,10 @@ namespace MicroSocialServer
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session")]
         public void CreateSession(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             JObject jsonPayload = GetJsonPayload(context.Request);
 
             String username = jsonPayload.GetValue("username").ToString();
@@ -76,7 +80,6 @@ namespace MicroSocialServer
                 JObject response = new JObject();
                 response["session_id"] = JToken.FromObject(sessionId);
 
-                
                 this.SendJsonResponse(context, response);
             }
             else
