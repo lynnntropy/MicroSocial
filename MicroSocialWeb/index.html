@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <div id="login" ng-controller="LoginController as login" ng-hide="validCookie">
+    <div id="login" ng-controller="LoginController as login">
         <span id="login-spinner" us-spinner spinner-key="login" ng-class="{ showspinner: showSpinner }"></span>
         <div id="login-form">
             <form name="loginForm">
@@ -39,7 +39,7 @@
 
                 <input class="btn btn-success" type="submit" id="submit-login" value="{{ registerForm ? 'Register' : 'Login' }}" ng-click="submitForm()" ng-disabled="loginForm.$invalid || loginForm.$pristine">
 
-                <div class="register" ng-click="showRegister()" ng>
+                <div class="register" ng-click="showRegister()">
                     {{ registerForm ? '» Login «' : '» Create an account «' }}
                 </div>
             </form>

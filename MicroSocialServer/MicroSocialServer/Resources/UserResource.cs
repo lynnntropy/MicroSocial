@@ -170,7 +170,7 @@ namespace MicroSocialServer
                     context.Response.StatusCode = 200; // 200 OK
                     JObject response = new JObject();
                     //response.Add("users", Newtonsoft.Json.JsonConvert.SerializeObject(users));
-                    response["username"] = JToken.FromObject(dbManager.GetUserFromSession(sessionId));
+                    response["username"] = JToken.FromObject(dbManager.GetUserFromSession(sessionId).username);
 
                     dbManager.Close();
                     this.SendJsonResponse(context, response);
