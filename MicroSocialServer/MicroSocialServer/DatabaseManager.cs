@@ -50,7 +50,12 @@ namespace MicroSocialServer
 
             while (reader.Read())
             {
-                users.Add(new User((string) reader["username"]));
+                var user = new User();
+                user.username = (string) reader["username"];
+                user.fullName = (string) reader["full_name"];
+                user.email = (string)reader["email"];
+
+                users.Add(user);
             }
 
             return users;

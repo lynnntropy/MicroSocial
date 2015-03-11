@@ -1,4 +1,4 @@
-var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner']);
+var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar']);
 
 microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({
@@ -23,8 +23,8 @@ microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvi
 
 microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', function ($scope, $rootScope, $http, $log, $location, usSpinnerService)
 {
-    var baseUrl = $location.absUrl();
-    baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+    $rootScope.baseUrl = $location.absUrl();
+    $rootScope.baseUrl = $rootScope.baseUrl.substring(0, $rootScope.baseUrl.length - 1);
 
     if ($.cookie('session'))
     {
@@ -32,7 +32,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
 
         $http({
             method: "POST",
-            url: baseUrl + ":9000" + "/session/check",
+            url: $rootScope.baseUrl + ":9000" + "/session/check",
             data: {
                 "session_id": $.cookie('session')
             }
@@ -186,5 +186,36 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         $.cookie('session', session, { path: '/', expires: 365 });
 
         $('#login').addClass("loginEnded");
+
+        $rootScope.$broadcast('loginCompleted');
+    };
+}]);
+
+microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+    $scope.users = [];
+
+    $scope.$on('loginCompleted', function (event)
+    {
+        $log.info("User list received login completed event.");
+
+        $scope.getUsers();
+    });
+
+    $scope.getUsers = function()
+    {
+        $http({
+            method: "GET",
+            url: $rootScope.baseUrl + ":9000" + "/getUsers"
+        })
+        .success(function (data, status, headers, config)
+        {
+            $scope.users = data.users;
+            $log.info($scope.users);
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
     };
 }]);

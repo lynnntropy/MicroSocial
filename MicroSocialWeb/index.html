@@ -16,6 +16,8 @@
     <script src="bower_components/jquery-cookie/jquery.cookie.js"></script>
     <script src="bower_components/spin.js/spin.js"></script>
     <script src="bower_components/angular-spinner/angular-spinner.js"></script>
+    <script src="bower_components/angular-gravatar/build/md5.min.js"></script>
+    <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
 
     <script src="js/controllers.js"></script>
 </head>
@@ -47,7 +49,18 @@
     </div>
 
     <div id="main">
+        <div id="user-list" ng-controller="UserListController">
+            <div class="user" ng-repeat="user in users">
+                <div class="avatar"><img gravatar-src="'{{user.email}}'" gravatar-size="100"/></div>
+                <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>
+            </div>
+        </div>
 
+        <div id="main-window">
+            <div id="feed">
+
+            </div>
+        </div>
     </div>
 </body>
 

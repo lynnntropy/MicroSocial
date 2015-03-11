@@ -58,4 +58,23 @@ div#login {
     div#login div#login-form .alert {
       margin-top: 0px; }
 
+#main #user-list {
+  position: absolute;
+  width: 250px;
+  top: 0px;
+  bottom: 0px;
+  background-color: #eee; }
+  #main #user-list .user {
+    cursor: pointer;
+    transition: background-color 0.25s ease; }
+    #main #user-list .user:hover {
+      background-color: rgba(0, 0, 0, 0.075); }
+    #main #user-list .user .avatar img {
+      width: 50px;
+      height: 50px; }
+    #main #user-list .user .name {
+      position: absolute;
+      left: 55px;
+      top: 0px; }
+
 /*# sourceMappingURL=app.css.map */
