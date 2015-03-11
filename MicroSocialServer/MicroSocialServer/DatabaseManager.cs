@@ -27,11 +27,11 @@ namespace MicroSocialServer
 
         // USER MANAGEMENT
 
-        public void AddUser(string username, string passwordHash)
+        public void AddUser(User user)
         {
             var sqlCommand = String.Format(
-                "INSERT INTO Users VALUES ('{0}', '{1}');",
-                username, passwordHash
+                "INSERT INTO Users (username, password_hash, full_name, email) VALUES ('{0}', '{1}', '{2}', '{3}');",
+                user.username, user.passwordHash, user.fullName, user.email
                 );
 
             var command = new SQLiteCommand(sqlCommand, _databaseConnection);
@@ -65,12 +65,19 @@ namespace MicroSocialServer
             var command = new SQLiteCommand(sqlQuery, _databaseConnection);
             var reader = command.ExecuteReader();
 
-            reader.Read();
-            var hashedPassword = (string) reader["password_hash"];
+            if (reader.HasRows)
+            {
+                reader.Read();
+                var hashedPassword = (string) reader["password_hash"];
 
-            reader.Close();
+                reader.Close();
 
-            return BCrypt.Net.BCrypt.Verify(plaintextPassword, hashedPassword);
+                return BCrypt.Net.BCrypt.Verify(plaintextPassword, hashedPassword);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         // SESSION MANAGEMENT

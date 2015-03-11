@@ -9,10 +9,17 @@ div#login
 
   background-color: #212121;
 
+  transition: opacity 1s ease;
+
+  &.loginEnded
+  {
+    opacity: 0;
+  }
+
   div#login-form
   {
-//    padding: 15px;
     width: 250px;
+    opacity: 1;
 
     margin: 0 auto;
     position: relative;
@@ -21,18 +28,40 @@ div#login
 
     text-align: center;
 
+    transition: opacity 0.35s ease;
+
+    &.loading
+    {
+      opacity: 0;
+    }
+
+    #login-spinner,
+    #login-spinner *
+    {
+      opacity: 0 !important;
+
+      transition: opacity 0.35s ease;
+
+      &.showspinner
+      {
+        opacity: 1;
+      }
+    }
+
     .ng-hide-add, .ng-hide-remove
     {
       /* ensure visibility during the transition */
       display: block !important; /* yes, important */
     }
 
-    .cssSlideUp {
+    .cssSlideUp
+    {
       transition: all .7s ease;
       height: 90px;
       overflow: hidden;
     }
-    .cssSlideUp.ng-hide {
+    .cssSlideUp.ng-hide
+    {
       height:0;
     }
 
@@ -52,11 +81,6 @@ div#login
     {
       background-color: rgb(255, 200, 200);
     }
-
-//    #email.ng-valid.ng-touched
-//    {
-//      background-color: rgb(200, 255, 200);
-//    }
 
     #submit-login
     {
@@ -82,7 +106,12 @@ div#login
 
     #register-form
     {
-//      margin-bottom: 15px;
+    }
+
+    .alert
+    {
+      margin-top: 0px;
+//      height: 100px;
     }
   }
 }

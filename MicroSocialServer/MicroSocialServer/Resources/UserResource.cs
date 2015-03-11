@@ -20,24 +20,51 @@ namespace MicroSocialServer
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/register")]
         public void RegisterUser(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             JObject jsonPayload = GetJsonPayload(context.Request);
 
             String username = jsonPayload.GetValue("username").ToString();
             String password = jsonPayload.GetValue("password").ToString();
+            String fullName = jsonPayload.GetValue("fullName").ToString();
+            String email = jsonPayload.GetValue("email").ToString();
 
             String passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-            if (username != null && passwordHash != null)
+            if (username != null && passwordHash != null && email != null)
             {
                 DatabaseManager dbManager = new DatabaseManager();
                 dbManager.Connect();
-                dbManager.AddUser(username, passwordHash);
-                dbManager.Close();
 
-                this.SendTextResponse(context, String.Format("Successfully registered user {0}.", username));
+                if (!dbManager.GetUsers().Exists(x => x.username == username))
+                {
+                    var user = new User();
+                    user.username = username;
+                    user.passwordHash = passwordHash;
+                    user.fullName = fullName;
+                    user.email = email;
+
+                    dbManager.AddUser(user);
+                    dbManager.Close();
+
+                    context.Response.StatusCode = 200;
+                    this.SendTextResponse(context, String.Format("Successfully registered user {0}.", username));
+                }
+                else
+                {
+                    dbManager.Close();
+
+                    context.Response.StatusCode = 403;
+                    this.SendTextResponse(context, String.Format("User already exists."));
+                }
+
+                
             }
             else
-            { 
+            {
+                context.Response.StatusCode = 400;
                 this.SendTextResponse(context, "No valid user received.");
             }
         }
@@ -57,7 +84,7 @@ namespace MicroSocialServer
             this.SendJsonResponse(context, response);
         }
 
-        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session")]
+        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session$")]
         public void CreateSession(HttpListenerContext context)
         {
             context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -119,6 +146,35 @@ namespace MicroSocialServer
 
                 context.Response.StatusCode = 401; // 401 Unauthorized
                 this.SendTextResponse(context, "Unauthorized");
+            }
+        }
+
+        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session/check$")]
+        public void CheckSession(HttpListenerContext context)
+        {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+            JObject jsonPayload = GetJsonPayload(context.Request);
+
+            int sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
+
+            if (sessionId != null)
+            {
+                DatabaseManager dbManager = new DatabaseManager();
+                dbManager.Connect();
+
+                if (dbManager.CheckSession(sessionId))
+                {
+                    context.Response.StatusCode = 200; // 200 OK
+                    JObject response = new JObject();
+                    //response.Add("users", Newtonsoft.Json.JsonConvert.SerializeObject(users));
+                    response["username"] = JToken.FromObject(dbManager.GetUserFromSession(sessionId));
+
+                    dbManager.Close();
+                    this.SendJsonResponse(context, response);
+                }
             }
         }
     }

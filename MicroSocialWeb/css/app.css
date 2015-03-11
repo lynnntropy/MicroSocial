@@ -4,14 +4,28 @@ div#login {
   margin: 0;
   width: 100%;
   height: 100%;
-  background-color: #212121; }
+  background-color: #212121;
+  transition: opacity 1s ease; }
+  div#login.loginEnded {
+    opacity: 0; }
   div#login div#login-form {
     width: 250px;
+    opacity: 1;
     margin: 0 auto;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-    text-align: center; }
+    text-align: center;
+    transition: opacity 0.35s ease; }
+    div#login div#login-form.loading {
+      opacity: 0; }
+    div#login div#login-form #login-spinner,
+    div#login div#login-form #login-spinner * {
+      opacity: 0 !important;
+      transition: opacity 0.35s ease; }
+      div#login div#login-form #login-spinner.showspinner,
+      div#login div#login-form #login-spinner *.showspinner {
+        opacity: 1; }
     div#login div#login-form .ng-hide-add, div#login div#login-form .ng-hide-remove {
       /* ensure visibility during the transition */
       display: block !important;
@@ -41,5 +55,7 @@ div#login {
       transition: color 0.3s ease; }
       div#login div#login-form .register:hover {
         color: #999; }
+    div#login div#login-form .alert {
+      margin-top: 0px; }
 
 /*# sourceMappingURL=app.css.map */
