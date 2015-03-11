@@ -19,11 +19,13 @@
     <script src="bower_components/angular-gravatar/build/md5.min.js"></script>
     <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
 
+    <script src="js/jquery.timeago.js"></script>
+
     <script src="js/controllers.js"></script>
 </head>
 
 <body>
-    <div id="login" ng-controller="LoginController as login">
+    <div id="login" ng-controller="LoginController">
         <span id="login-spinner" us-spinner spinner-key="login" ng-class="{ showspinner: showSpinner }"></span>
         <div id="login-form">
             <form name="loginForm">
@@ -57,8 +59,13 @@
         </div>
 
         <div id="main-window">
-            <div id="feed">
-
+            <div id="feed" ng-controller="FeedController">
+                <div class="post" ng-repeat="post in posts">
+                    <div class="avatar"><img gravatar-src="'{{post.poster.email}}'" gravatar-size="100"/></div>
+                    <div class="name">{{post.poster.fullName}}</div>
+                    <div class="time"><time class="timeago" datetime="{{post.time}}"></time></div>
+                    <div class="status-body">{{post.statusContent}}</div>
+                </div>
             </div>
         </div>
     </div>

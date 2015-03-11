@@ -78,7 +78,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
 
             $http({
                 method: "POST",
-                url: baseUrl + ":9000" + "/session",
+                url: $rootScope.baseUrl + ":9000" + "/session",
                 data: {
                     "username": $scope.user.username,
                     "password": $scope.user.password
@@ -99,7 +99,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         {
             $http({
                 method: "POST",
-                url: baseUrl + ":9000" + "/session",
+                url: $rootScope.baseUrl + ":9000" + "/session",
                 data: {
                     "username": $scope.user.username,
                     "password": $scope.user.password
@@ -123,7 +123,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         {
             $http({
                 method: "POST",
-                url: baseUrl + ":9000" + "/register",
+                url: $rootScope.baseUrl + ":9000" + "/register",
                 data: {
                     "username": $scope.user.username,
                     "password": $scope.user.password,
@@ -133,6 +133,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
             })
             .success(function (data, status, headers, config)
             {
+
                 $log.info(data);
                 registerSuccess();
 
@@ -188,6 +189,11 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         $('#login').addClass("loginEnded");
 
         $rootScope.$broadcast('loginCompleted');
+
+        setTimeout(function()
+        {
+            $('#login').css("display", "none");
+        }, 1000)
     };
 }]);
 
@@ -212,6 +218,42 @@ microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http'
         {
             $scope.users = data.users;
             $log.info($scope.users);
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    };
+}]);
+
+microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+    $scope.posts = [];
+
+    $scope.$on('loginCompleted', function (event)
+    {
+        $log.info("Feed controller received login completed event.");
+
+        $scope.getFeed(0, 15);
+    });
+
+    $scope.getFeed = function (first, last)
+    {
+        $http({
+            method: "GET",
+            url: $rootScope.baseUrl + ":9000" + "/feed?first=" + first + "&last=" + last
+        })
+        .success(function (data, status, headers, config)
+        {
+//            $log.info(data);
+            $scope.posts = $scope.posts.concat(data.feed);
+            $log.info($scope.posts);
+
+                setTimeout(function ()
+                {
+                    jQuery("time.timeago").timeago();
+                }, 10);
+
 
         }).error(function (data, status, headers, config)
         {

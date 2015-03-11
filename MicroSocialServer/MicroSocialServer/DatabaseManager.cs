@@ -187,6 +187,33 @@ namespace MicroSocialServer
             }
         }
 
+        public User GetUserFromUsername(string username)
+        {
+            var sql = String.Format(
+                "SELECT * FROM Users WHERE username='{0}'",
+                username);
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            var reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+                var user = new User();
+                user.username = (string) reader["username"];
+                user.email = (string) reader["email"];
+                user.fullName = (string)reader["full_name"];
+
+                reader.Close();
+                return user;
+            }
+            else
+            {
+                reader.Close();
+                return null;
+            }
+        }
+
         // STATUS MANAGEMENT
 
         public void AddStatus(Status status)
@@ -216,10 +243,8 @@ namespace MicroSocialServer
             while (reader.Read())
             {
                 var newStatus = new Status();
-                newStatus.poster = (string) reader["username"];
+                newStatus.poster = GetUserFromUsername((string) reader["username"]);
                 newStatus.statusContent = (string) reader["status_body"];
-                // TODO - sort out a way to retrieve date time values from the db
-                //newStatus.time = DateTime.Parse((string) reader["time"]);
                 newStatus.time = (DateTime) reader["time"];
 
                 if (i >= first)

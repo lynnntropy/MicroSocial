@@ -21,6 +21,10 @@ namespace MicroSocialServer.Resources
         [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/feed\?first=\d+&last=\d+$")]
         public void GetFeed(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             // we know the GET parameters were passed because otherwise the regex wouldn't match
 
             string regex = @"^/feed\?first=(?<first>\d+)&last=(?<last>\d+)$";
@@ -45,6 +49,7 @@ namespace MicroSocialServer.Resources
             }
             else
             {
+                context.Response.StatusCode = 500;
                 this.SendTextResponse(context,
                     "Grapevine dun goofed if you got this far..");
             }
@@ -66,7 +71,7 @@ namespace MicroSocialServer.Resources
                 // session is valid, go on
 
                 var newStatus = new Status();
-                newStatus.poster = dbManager.GetUserFromSession(sessionId).username;
+                newStatus.poster = dbManager.GetUserFromSession(sessionId);
                 newStatus.statusContent = statusBody;
                 dbManager.AddStatus(newStatus);
 

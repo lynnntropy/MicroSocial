@@ -10,7 +10,7 @@ namespace MicroSocialServer.Schema
 {
     class Status
     {
-        public string poster;
+        public User poster;
         public DateTime time;
         public string statusContent;
 

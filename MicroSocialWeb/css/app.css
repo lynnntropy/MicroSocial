@@ -1,4 +1,5 @@
 div#login {
+  z-index: 1000;
   position: fixed;
   padding: 0;
   margin: 0;
@@ -63,10 +64,14 @@ div#login {
   width: 250px;
   top: 0px;
   bottom: 0px;
-  background-color: #eee; }
+  background-color: #eee;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10; }
   #main #user-list .user {
+    position: relative;
     cursor: pointer;
-    transition: background-color 0.25s ease; }
+    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease-out; }
     #main #user-list .user:hover {
       background-color: rgba(0, 0, 0, 0.075); }
     #main #user-list .user .avatar img {
@@ -76,5 +81,43 @@ div#login {
       position: absolute;
       left: 55px;
       top: 0px; }
+#main #main-window {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 250px;
+  background-color: #e6e6e6;
+  z-index: 1;
+  padding-top: 30px;
+  overflow: auto; }
+  #main #main-window #feed .post {
+    position: relative;
+    margin: 0 auto;
+    width: 55%;
+    background-color: #f3f3f3;
+    padding-top: 70px;
+    padding-bottom: 20px;
+    border-radius: 3px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; }
+    #main #main-window #feed .post .avatar {
+      position: absolute;
+      left: 20px;
+      top: 20px; }
+      #main #main-window #feed .post .avatar img {
+        width: 40px;
+        height: 40px; }
+    #main #main-window #feed .post .name {
+      position: absolute;
+      left: 65px;
+      top: 20px; }
+    #main #main-window #feed .post .time {
+      position: absolute;
+      left: 65px;
+      top: 40px; }
+    #main #main-window #feed .post .status-body {
+      margin-left: 20px;
+      margin-right: 20px; }
 
 /*# sourceMappingURL=app.css.map */

@@ -1,5 +1,6 @@
 div#login
 {
+  z-index: 1000;
   position: fixed;
   padding: 0;
   margin: 0;
@@ -126,11 +127,17 @@ div#login
     bottom: 0px;
     background-color: #eee;
 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+
     .user
     {
+      position: relative;
       cursor: pointer;
 
-      transition: background-color 0.25s ease;
+      border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+
+      transition: background-color 0.2s ease-out;
 
       &:hover
       {
@@ -153,4 +160,80 @@ div#login
       }
     }
   }
+
+  #main-window
+  {
+    position: absolute;
+//    width: 250px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 250px;
+    background-color: #e6e6e6;
+
+    z-index: 1;
+
+    padding-top: 30px;
+    overflow: auto;
+
+    #feed
+    {
+      .post
+      {
+        position: relative;
+
+        margin: 0 auto;
+
+        width: 55%;
+        background-color: #f3f3f3;
+
+        $post-padding: 20px;
+
+        padding-top: $post-padding + 50px;
+        padding-bottom: $post-padding;
+
+        border-radius: 3px;
+
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+
+        margin-bottom: 20px;
+
+        .avatar
+        {
+          position: absolute;
+          left: $post-padding;
+          top: $post-padding;
+
+          img
+          {
+            width: 40px;
+            height: 40px;
+          }
+        }
+
+        .name
+        {
+          position: absolute;
+          left: $post-padding + 45px;
+          top: $post-padding;
+        }
+
+        .time
+        {
+          position: absolute;
+          left: $post-padding + 45px;
+          top: $post-padding + 20px;
+        }
+
+        .status-body
+        {
+//          margin-top: 50px;
+          margin-left: $post-padding;
+          margin-right: $post-padding;
+//          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+
 }
