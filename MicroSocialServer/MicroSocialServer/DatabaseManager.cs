@@ -220,7 +220,7 @@ namespace MicroSocialServer
         {
             var sql = String.Format(
                 "INSERT INTO Statuses (username, time, status_body) VALUES ('{0}', DATETIME('NOW'), '{1}')",
-                status.poster, status.statusContent
+                status.poster.username, status.statusContent
             );
 
             var command = new SQLiteCommand(sql, _databaseConnection);
@@ -245,7 +245,7 @@ namespace MicroSocialServer
                 var newStatus = new Status();
                 newStatus.poster = GetUserFromUsername((string) reader["username"]);
                 newStatus.statusContent = (string) reader["status_body"];
-                newStatus.time = (DateTime) reader["time"];
+                newStatus.time = ((DateTime) reader["time"]);
 
                 if (i >= first)
                     statuses.Add(newStatus);
