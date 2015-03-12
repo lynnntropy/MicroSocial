@@ -119,11 +119,39 @@ div#login
 
 #main
 {
+//  position: relative;
+
+  $navbar-height: 60px;
+
+  .navbar
+  {
+    position: absolute;
+    z-index: 100;
+    border-radius: 0;
+
+    height: $navbar-height;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: #f6f6f6;
+
+    .logo
+    {
+      height: 50%;
+
+      position: relative;
+      top: 30px;
+      transform: translateY(-50%);
+
+      margin-left: 15px;
+    }
+  }
+
   #user-list
   {
     position: absolute;
     width: 250px;
-    top: 0px;
+    top: $navbar-height;
     bottom: 0px;
     background-color: #eee;
 
@@ -161,11 +189,49 @@ div#login
     }
   }
 
+  $messages-width: 400px;
+  #messages-pane
+  {
+    position: absolute;
+
+    //      $width: 400px;
+
+    z-index: 5;
+
+    left: 250px;
+    top: $navbar-height;
+
+    width: $messages-width;
+//    top: 0px;
+    bottom: 0px;
+
+    background-color: #ffffff;
+
+    transition: left 0.5s ease;
+
+    &.slide-out
+    {
+      left: 250px - $messages-width;
+    }
+
+    .close-button
+    {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+
+      width: 20px;
+      height: 20px;
+
+      background-color: blue;
+    }
+  }
+
   #main-window
   {
     position: absolute;
 //    width: 250px;
-    top: 0px;
+    top: $navbar-height;
     bottom: 0px;
     right: 0px;
     left: 250px;
@@ -178,13 +244,52 @@ div#login
 
     #feed
     {
+      position: absolute;
+
+      transition: left 0.5s ease;
+
+      left: 0;
+      right: 0;
+//      top: 0;
+//      bottom: 0;
+
+      .post
+      {
+        width: 500px;
+      }
+
+      .status-form
+      {
+        width: 545px;
+      }
+
+      &.half-width
+      {
+        left: $messages-width;
+
+        .post
+        {
+          width: 470px;
+        }
+
+        .status-form
+        {
+          width: 500px;
+        }
+      }
+
+      .post,
+      .status-form
+      {
+        transition: all 0.5s ease;
+      }
+
       .post
       {
         position: relative;
 
         margin: 0 auto;
 
-        width: 55%;
         background-color: #f3f3f3;
 
         $post-padding: 20px;
@@ -254,11 +359,13 @@ div#login
 
       .status-form
       {
-        position: relative;
+//        position: relative;
+        margin-left: auto;
+        margin-right: auto;
 
-        margin: 0 auto;
+//        margin: 0 auto;
 
-        width: 55%;
+//        width: 55%;
         background-color: #f3f3f3;
 
         $form-padding: 0px;

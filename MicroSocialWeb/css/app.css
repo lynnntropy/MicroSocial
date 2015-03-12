@@ -59,10 +59,25 @@ div#login {
     div#login div#login-form .alert {
       margin-top: 0px; }
 
+#main .navbar {
+  position: absolute;
+  z-index: 100;
+  border-radius: 0;
+  height: 60px;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: #f6f6f6; }
+  #main .navbar .logo {
+    height: 50%;
+    position: relative;
+    top: 30px;
+    transform: translateY(-50%);
+    margin-left: 15px; }
 #main #user-list {
   position: absolute;
   width: 250px;
-  top: 0px;
+  top: 60px;
   bottom: 0px;
   background-color: #eee;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -81,9 +96,27 @@ div#login {
       position: absolute;
       left: 55px;
       top: 0px; }
+#main #messages-pane {
+  position: absolute;
+  z-index: 5;
+  left: 250px;
+  top: 60px;
+  width: 400px;
+  bottom: 0px;
+  background-color: #ffffff;
+  transition: left 0.5s ease; }
+  #main #messages-pane.slide-out {
+    left: -150px; }
+  #main #messages-pane .close-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20px;
+    height: 20px;
+    background-color: blue; }
 #main #main-window {
   position: absolute;
-  top: 0px;
+  top: 60px;
   bottom: 0px;
   right: 0px;
   left: 250px;
@@ -91,68 +124,84 @@ div#login {
   z-index: 1;
   padding-top: 30px;
   overflow: auto; }
-  #main #main-window #feed .post {
-    position: relative;
-    margin: 0 auto;
-    width: 55%;
-    background-color: #f3f3f3;
-    padding-top: 70px;
-    padding-bottom: 20px;
-    border-radius: 3px;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px; }
-    #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave {
-      transition: 0.5s all ease; }
-    #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave.ng-leave-active {
-      opacity: 0;
-      left: -50px; }
-    #main #main-window #feed .post.ng-leave, #main #main-window #feed .post.ng-enter.ng-enter-active {
-      opacity: 1;
-      left: 0; }
-    #main #main-window #feed .post .avatar {
-      position: absolute;
-      left: 20px;
-      top: 20px; }
-      #main #main-window #feed .post .avatar img {
-        width: 40px;
-        height: 40px; }
-    #main #main-window #feed .post .name {
-      position: absolute;
-      left: 65px;
-      top: 20px; }
-    #main #main-window #feed .post .time {
-      position: absolute;
-      left: 65px;
-      top: 40px; }
-    #main #main-window #feed .post .status-body {
-      margin-left: 20px;
-      margin-right: 20px; }
-  #main #main-window #feed .status-form {
-    position: relative;
-    margin: 0 auto;
-    width: 55%;
-    background-color: #f3f3f3;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    border-radius: 3px;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    overflow: hidden; }
-    #main #main-window #feed .status-form #status-field {
-      background-color: transparent;
-      border: none;
-      box-shadow: none;
-      resize: none; }
-    #main #main-window #feed .status-form #status-submit {
-      float: right;
-      padding-left: 9px;
-      padding-right: 9px;
-      padding-top: 4px;
-      padding-bottom: 4px;
-      margin-right: 5px;
-      margin-bottom: 5px;
-      transition: opacity 0.5s ease; }
-      #main #main-window #feed .status-form #status-submit[disabled] {
-        opacity: 0; }
+  #main #main-window #feed {
+    position: absolute;
+    transition: left 0.5s ease;
+    left: 0;
+    right: 0; }
+    #main #main-window #feed .post {
+      width: 500px; }
+    #main #main-window #feed .status-form {
+      width: 545px; }
+    #main #main-window #feed.half-width {
+      left: 400px; }
+      #main #main-window #feed.half-width .post {
+        width: 470px; }
+      #main #main-window #feed.half-width .status-form {
+        width: 500px; }
+    #main #main-window #feed .post,
+    #main #main-window #feed .status-form {
+      transition: all 0.5s ease; }
+    #main #main-window #feed .post {
+      position: relative;
+      margin: 0 auto;
+      background-color: #f3f3f3;
+      padding-top: 70px;
+      padding-bottom: 20px;
+      border-radius: 3px;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px; }
+      #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave {
+        transition: 0.5s all ease; }
+      #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave.ng-leave-active {
+        opacity: 0;
+        left: -50px; }
+      #main #main-window #feed .post.ng-leave, #main #main-window #feed .post.ng-enter.ng-enter-active {
+        opacity: 1;
+        left: 0; }
+      #main #main-window #feed .post .avatar {
+        position: absolute;
+        left: 20px;
+        top: 20px; }
+        #main #main-window #feed .post .avatar img {
+          width: 40px;
+          height: 40px; }
+      #main #main-window #feed .post .name {
+        position: absolute;
+        left: 65px;
+        top: 20px; }
+      #main #main-window #feed .post .time {
+        position: absolute;
+        left: 65px;
+        top: 40px; }
+      #main #main-window #feed .post .status-body {
+        margin-left: 20px;
+        margin-right: 20px; }
+    #main #main-window #feed .status-form {
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #f3f3f3;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      border-radius: 3px;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden; }
+      #main #main-window #feed .status-form #status-field {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        resize: none; }
+      #main #main-window #feed .status-form #status-submit {
+        float: right;
+        padding-left: 9px;
+        padding-right: 9px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        transition: opacity 0.5s ease; }
+        #main #main-window #feed .status-form #status-submit[disabled] {
+          opacity: 0; }
 
 /*# sourceMappingURL=app.css.map */

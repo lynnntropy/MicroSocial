@@ -224,11 +224,17 @@ microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http'
             $log.info(data);
         });
     };
+
+    $scope.openMessages = function(username)
+    {
+        $rootScope.$broadcast('openMessages', { username: username });
+    }
 }]);
 
 microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
 {
     $scope.posts = [];
+    $scope.fullWidth = true;
 
     $scope.$on('loginCompleted', function (event)
     {
@@ -295,4 +301,26 @@ microSocialApp.controller('StatusFormController', ['$scope', '$rootScope', '$htt
             $log.info(data);
         });
     }
+}]);
+
+microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+    $scope.username = "";
+    $rootScope.messagesOpen = false;
+
+    $scope.$on('openMessages', function(event, args)
+    {
+        $scope.openMessages(args.username);
+    });
+
+    $scope.openMessages = function(username)
+    {
+        $scope.username = username;
+        $rootScope.messagesOpen = true;
+    };
+
+    $scope.closeMessages = function()
+    {
+        $rootScope.messagesOpen = false;
+    };
 }]);

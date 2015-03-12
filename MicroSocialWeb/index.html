@@ -51,21 +51,33 @@
     </div>
 
     <div id="main">
+        <div class="navbar">
+            <img class="logo" src="img/MicroSocialLogoDark.png">
+        </div>
+
         <div id="user-list" ng-controller="UserListController">
-            <div class="user" ng-repeat="user in users">
+            <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username)">
                 <div class="avatar"><img gravatar-src="'{{user.email}}'" gravatar-size="100"/></div>
                 <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>
             </div>
         </div>
 
+        <div id="messages-pane" ng-controller="MessagesController" ng-class="{'slide-out': !messagesOpen}">
+            <div class="close-button" ng-click="closeMessages()">
+
+            </div>
+        </div>
+
         <div id="main-window">
-            <div id="feed" ng-controller="FeedController">
+
+            <div id="feed" ng-controller="FeedController" ng-class="{'full-width': !messagesOpen, 'half-width': messagesOpen}">
                 <div class="status-form" ng-controller="StatusFormController">
                     <form name="statusForm">
                         <textarea placeholder="Write a post.." ng-model="status.body" class="form-control" rows="2" id="status-field"></textarea>
                         <button id="status-submit" ng-click="submitStatus()" ng-disabled="statusForm.$pristine" type="submit" class="btn btn-small btn-default cssSlideUp">Submit</button>
                     </form>
                 </div>
+
                 <div class="post" ng-repeat="post in posts | orderBy:'-time'">
                     <div class="avatar"><img gravatar-src="'{{post.poster.email}}'" gravatar-size="100"/></div>
                     <div class="name">{{post.poster.fullName}}</div>
@@ -73,6 +85,7 @@
                     <div class="status-body">{{post.statusContent}}</div>
                 </div>
             </div>
+
         </div>
     </div>
 </body>
