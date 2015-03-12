@@ -12,7 +12,9 @@ namespace MicroSocialServer
     {
         static void Main(string[] args)
         {
-            var server = new RESTServer(port: "9000");
+            var server = new RESTServer();
+            server.Port = "9000";
+            server.Host = "*";
             server.Start();
 
             while (server.IsListening)

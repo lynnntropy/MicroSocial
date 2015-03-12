@@ -198,6 +198,26 @@ div#login
 
         margin-bottom: 20px;
 
+        &.ng-enter,
+        &.ng-leave
+        {
+          transition: 0.5s all ease;
+        }
+
+        &.ng-enter,
+        &.ng-leave.ng-leave-active
+        {
+          opacity: 0;
+          left: -50px;
+        }
+
+        &.ng-leave,
+        &.ng-enter.ng-enter-active
+        {
+          opacity: 1;
+          left: 0;
+        }
+
         .avatar
         {
           position: absolute;
@@ -227,10 +247,63 @@ div#login
 
         .status-body
         {
-//          margin-top: 50px;
           margin-left: $post-padding;
           margin-right: $post-padding;
-//          margin-bottom: 20px;
+        }
+      }
+
+      .status-form
+      {
+        position: relative;
+
+        margin: 0 auto;
+
+        width: 55%;
+        background-color: #f3f3f3;
+
+        $form-padding: 0px;
+
+        padding-top: $form-padding;
+        padding-bottom: $form-padding;
+
+        border-radius: 3px;
+
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+
+        margin-bottom: 20px;
+
+        overflow: hidden;
+
+        #status-field
+        {
+          background-color: rgba(0, 0, 0, 0);
+          border: none;
+          box-shadow: none;
+          resize: none;
+        }
+
+        #status-submit
+        {
+          float: right;
+
+//          width: 50px;
+//          height: 35px;
+
+          $padding: 4px;
+          padding-left: $padding + 5px;
+          padding-right: $padding + 5px;
+          padding-top: $padding;
+          padding-bottom: $padding;
+
+          margin-right: 5px;
+          margin-bottom: 5px;
+
+          transition: opacity 0.5s ease;
+
+          &[disabled]
+          {
+            opacity: 0;
+          }
         }
       }
     }

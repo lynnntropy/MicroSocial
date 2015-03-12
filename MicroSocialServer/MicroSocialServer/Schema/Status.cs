@@ -14,6 +14,8 @@ namespace MicroSocialServer.Schema
         public DateTime time;
         public string statusContent;
 
+        //public int databaseId;
+
         public Status()
         {
 

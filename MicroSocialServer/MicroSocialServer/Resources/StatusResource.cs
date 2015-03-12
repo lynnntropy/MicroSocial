@@ -58,6 +58,10 @@ namespace MicroSocialServer.Resources
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/status$")]
         public void PostStatus(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             var jsonPayload = GetJsonPayload(context.Request);
 
             var sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());

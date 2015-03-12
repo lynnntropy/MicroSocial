@@ -87,7 +87,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
             .success(function (data, status, headers, config)
             {
                 $log.info(data);
-                loginSuccess();
+                loginSuccess(data.session_id);
 
             }).error(function (data, status, headers, config)
             {
@@ -180,8 +180,8 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
     $scope.successfulLogin = function(session)
     {
 //        $scope.loginEnded = true;
-        $scope.session = session;
-        $log.info("$scope.session is " + $scope.session);
+        $rootScope.session = session;
+        $log.info("$rootScope.session is " + $rootScope.session);
 
 //        $cookies.session_id = session;
         $.cookie('session', session, { path: '/', expires: 365 });
@@ -237,6 +237,11 @@ microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$
         $scope.getFeed(0, 15);
     });
 
+    $scope.$on('refreshFeed', function (event)
+    {
+        $scope.getFeed(0, 0);
+    });
+
     $scope.getFeed = function (first, last)
     {
         $http({
@@ -260,4 +265,34 @@ microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$
             $log.info(data);
         });
     };
+}]);
+
+microSocialApp.controller('StatusFormController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+    $scope.status = {};
+
+    $scope.submitStatus = function()
+    {
+        $("#status-field").val('');
+        $scope.statusForm.$setPristine();
+
+        $http({
+            method: "POST",
+            url: $rootScope.baseUrl + ":9000" + "/status",
+            data:
+            {
+                "session_id": $rootScope.session,
+                "status_body": $scope.status.body
+            }
+        })
+        .success(function (data, status, headers, config)
+        {
+            $log.info("Posted status successfully.");
+            $rootScope.$broadcast('refreshFeed');
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    }
 }]);

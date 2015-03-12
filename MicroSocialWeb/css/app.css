@@ -101,6 +101,14 @@ div#login {
     border-radius: 3px;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px; }
+    #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave {
+      transition: 0.5s all ease; }
+    #main #main-window #feed .post.ng-enter, #main #main-window #feed .post.ng-leave.ng-leave-active {
+      opacity: 0;
+      left: -50px; }
+    #main #main-window #feed .post.ng-leave, #main #main-window #feed .post.ng-enter.ng-enter-active {
+      opacity: 1;
+      left: 0; }
     #main #main-window #feed .post .avatar {
       position: absolute;
       left: 20px;
@@ -119,5 +127,32 @@ div#login {
     #main #main-window #feed .post .status-body {
       margin-left: 20px;
       margin-right: 20px; }
+  #main #main-window #feed .status-form {
+    position: relative;
+    margin: 0 auto;
+    width: 55%;
+    background-color: #f3f3f3;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-radius: 3px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden; }
+    #main #main-window #feed .status-form #status-field {
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      resize: none; }
+    #main #main-window #feed .status-form #status-submit {
+      float: right;
+      padding-left: 9px;
+      padding-right: 9px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      transition: opacity 0.5s ease; }
+      #main #main-window #feed .status-form #status-submit[disabled] {
+        opacity: 0; }
 
 /*# sourceMappingURL=app.css.map */
