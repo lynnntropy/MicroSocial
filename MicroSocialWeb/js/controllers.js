@@ -26,9 +26,21 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
     $rootScope.baseUrl = $location.absUrl();
     $rootScope.baseUrl = $rootScope.baseUrl.substring(0, $rootScope.baseUrl.length - 1);
 
+    $scope.startSpin = function()
+    {
+        $scope.working = true;
+        $('#login-form').addClass('loading');
+
+        setTimeout(function ()
+        {
+            $scope.showSpinner = true;
+            usSpinnerService.spin('login');
+        }, 350);
+    };
+
     if ($.cookie('session'))
     {
-        // session cookie defined, check if it's valid
+        $scope.startSpin();
 
         $http({
             method: "POST",
@@ -47,6 +59,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         }).error(function (data, status, headers, config)
         {
             $log.info(data);
+            $scope.stopSpin();
         });
     }
 
@@ -148,18 +161,6 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
     {
         if ($scope.registerForm) $scope.registerForm = false;
         else $scope.registerForm = true;
-    };
-
-    $scope.startSpin = function()
-    {
-        $scope.working = true;
-        $('#login-form').addClass('loading');
-
-        setTimeout(function ()
-        {
-            $scope.showSpinner = true;
-            usSpinnerService.spin('login');
-        }, 350);
     };
 
     $scope.stopSpin = function()
