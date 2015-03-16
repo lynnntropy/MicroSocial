@@ -299,6 +299,18 @@ namespace MicroSocialServer
                 message.time = (DateTime) reader["time"];
                 message.messageBody = (string) reader["message"];
 
+                var emailSql = String.Format(
+                    @"SELECT email
+                      FROM Users 
+                      WHERE username = '{0}'",
+                    (string) reader["fromUser"]);
+
+                var emailCommand = new SQLiteCommand(emailSql, _databaseConnection);
+                var emailReader = emailCommand.ExecuteReader();
+                emailReader.Read();
+                message.senderEmail = (string) emailReader["email"];
+                emailReader.Close();
+
                 if (i >= first)
                     messages.Add(message);
 

@@ -57,6 +57,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp">
+      <HintPath>..\packages\WebSocketSharp.1.0.3-rc7\lib\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseManager.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="Schema\Status.cs" />
     <Compile Include="Schema\User.cs" />
     <Compile Include="Resources\UserResource.cs" />
+    <Compile Include="Socket\Chat.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

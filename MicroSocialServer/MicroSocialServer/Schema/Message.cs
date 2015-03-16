@@ -13,6 +13,8 @@ namespace MicroSocialServer.Schema
         public string senderName;
         public string recipientName;
 
+        public string senderEmail;
+
         public Message(string messageBody, DateTime time, string senderName, string recipientName)
         {
             this.messageBody = messageBody;

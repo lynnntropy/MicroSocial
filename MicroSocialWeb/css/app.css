@@ -101,19 +101,70 @@ div#login {
   z-index: 5;
   left: 250px;
   top: 60px;
-  width: 400px;
+  width: 300px;
   bottom: 0px;
   background-color: #ffffff;
   transition: left 0.5s ease; }
   #main #messages-pane.slide-out {
-    left: -150px; }
-  #main #messages-pane .close-button {
+    left: -50px; }
+  #main #messages-pane .header {
+    height: 40px; }
+    #main #messages-pane .header span.close-button {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      opacity: 0.75;
+      font-size: 20px;
+      cursor: pointer; }
+  #main #messages-pane .messages-container {
     position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 20px;
-    height: 20px;
-    background-color: blue; }
+    left: 0;
+    right: 0;
+    top: 40px;
+    bottom: 50px;
+    overflow: auto;
+    transition: all 0.2s ease;
+    opacity: 1; }
+    #main #messages-pane .messages-container.fade-out {
+      opacity: 0;
+      top: 80px; }
+    #main #messages-pane .messages-container .messages {
+      display: flex;
+      flex-direction: column-reverse;
+      padding-bottom: 15px; }
+      #main #messages-pane .messages-container .messages .message {
+        position: relative;
+        height: 35px; }
+        #main #messages-pane .messages-container .messages .message:not(.right-side) .avatar {
+          position: relative; }
+          #main #messages-pane .messages-container .messages .message:not(.right-side) .avatar img {
+            height: 35px;
+            width: 35px; }
+        #main #messages-pane .messages-container .messages .message:not(.right-side) .message-body {
+          position: absolute;
+          left: 40px;
+          bottom: 3px;
+          font-size: 20px; }
+        #main #messages-pane .messages-container .messages .message.right-side .avatar {
+          position: absolute;
+          right: 0;
+          top: 0; }
+          #main #messages-pane .messages-container .messages .message.right-side .avatar img {
+            height: 35px;
+            width: 35px; }
+        #main #messages-pane .messages-container .messages .message.right-side .message-body {
+          position: absolute;
+          right: 40px !important;
+          bottom: 3px;
+          font-size: 20px; }
+  #main #messages-pane .message-input {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff; }
+    #main #messages-pane .message-input input {
+      border-radius: 0; }
 #main #main-window {
   position: absolute;
   top: 60px;
@@ -134,7 +185,7 @@ div#login {
     #main #main-window #feed .status-form {
       width: 545px; }
     #main #main-window #feed.half-width {
-      left: 400px; }
+      left: 300px; }
       #main #main-window #feed.half-width .post {
         width: 470px; }
       #main #main-window #feed.half-width .status-form {
@@ -176,7 +227,8 @@ div#login {
         top: 40px; }
       #main #main-window #feed .post .status-body {
         margin-left: 20px;
-        margin-right: 20px; }
+        margin-right: 20px;
+        white-space: pre-line; }
     #main #main-window #feed .status-form {
       margin-left: auto;
       margin-right: auto;

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 using Grapevine.Server;
+using MicroSocialServer.Socket;
+using WebSocketSharp.Server;
 
 namespace MicroSocialServer
 {
@@ -16,6 +19,10 @@ namespace MicroSocialServer
             server.Port = "9000";
             server.Host = "*";
             server.Start();
+
+            var socketServer = new WebSocketServer(9001);
+            socketServer.AddWebSocketService<Socket.Chat>("/chat");
+            socketServer.Start();
 
             while (server.IsListening)
             {

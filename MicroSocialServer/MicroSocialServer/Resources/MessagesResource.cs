@@ -20,6 +20,10 @@ namespace MicroSocialServer.Resources
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/message$")]
         public void SendMessage(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             var jsonPayload = GetJsonPayload(context.Request);
             var sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
 
@@ -36,6 +40,17 @@ namespace MicroSocialServer.Resources
                 var message = new Message(messageBody, DateTime.Now, from, to);
                 dbManager.AddMessage(message);
 
+                foreach (Socket.Chat session in Socket.Chat.Chats)
+                {
+                    // send the message to the other user directly
+                    // if they are currently connected
+
+                    if (session.user1 == message.recipientName)
+                    {
+                        session.ReceiveMessage(message.messageBody);
+                    }
+                }
+
                 dbManager.Close();
                 this.SendTextResponse(context, "OK");
             }
@@ -50,6 +65,10 @@ namespace MicroSocialServer.Resources
         [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/messages\?session=\S+&user=\S+&first=\d+&last=\d+$")]
         public void GetMessages(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             // we know the GET parameters were passed because otherwise the regex wouldn't match
 
             //var jsonPayload = GetJsonPayload(context.Request);

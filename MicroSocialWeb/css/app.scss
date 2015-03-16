@@ -189,7 +189,7 @@ div#login
     }
   }
 
-  $messages-width: 400px;
+  $messages-width: 300px;
   #messages-pane
   {
     position: absolute;
@@ -214,16 +214,115 @@ div#login
       left: 250px - $messages-width;
     }
 
-    .close-button
+    .header
+    {
+      height: 40px;
+
+      span.close-button
+      {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        opacity: 0.75;
+        font-size: 20px;
+
+        cursor: pointer;
+      }
+    }
+
+    .messages-container {
+
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 40px;
+      bottom: 50px;
+
+      overflow: auto;
+
+      transition: all 0.2s ease;
+      opacity: 1;
+      &.fade-out
+      {
+        opacity: 0;
+        top: 80px;
+      }
+
+      .messages {
+
+//        position: absolute;
+//        bottom: 0;
+//        left: 0;
+//        right: 0;
+
+        display: flex;
+        flex-direction: column-reverse;
+
+        padding-bottom: 15px;
+
+        .message {
+          position: relative;
+          height: 35px;
+
+          &:not(.right-side) {
+            .avatar {
+              position: relative;
+
+              img {
+                height: 35px;
+                width: 35px;
+              }
+            }
+
+            .message-body {
+              position: absolute;
+              left: 40px;
+              bottom: 3px;
+
+              font-size: 20px;
+            }
+          }
+
+          &.right-side {
+            .avatar {
+              position: absolute;
+              right: 0;
+              top: 0;
+
+              img {
+                height: 35px;
+                width: 35px;
+              }
+            }
+
+            .message-body {
+              position: absolute;
+              //            left: none;
+              right: 40px !important;
+              bottom: 3px;
+
+              font-size: 20px;
+            }
+          }
+        }
+      }
+    }
+
+    .message-input
     {
       position: absolute;
-      right: 10px;
-      top: 10px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+//      height: 50px;
+      
+      background-color: #ffffff;
 
-      width: 20px;
-      height: 20px;
-
-      background-color: blue;
+      input
+      {
+        border-radius: 0;
+      }
     }
   }
 
@@ -354,6 +453,8 @@ div#login
         {
           margin-left: $post-padding;
           margin-right: $post-padding;
+
+          white-space: pre-line;
         }
       }
 

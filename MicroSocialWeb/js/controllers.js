@@ -1,4 +1,4 @@
-var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar']);
+var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives']);
 
 microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({
@@ -181,6 +181,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
     {
 //        $scope.loginEnded = true;
         $rootScope.session = session;
+        $rootScope.username = $scope.user.username;
         $log.info("$rootScope.session is " + $rootScope.session);
 
 //        $cookies.session_id = session;
@@ -279,6 +280,8 @@ microSocialApp.controller('StatusFormController', ['$scope', '$rootScope', '$htt
 
     $scope.submitStatus = function()
     {
+//        $scope.status.body = nl2br($scope.status.body, false);
+
         $("#status-field").val('');
         $scope.statusForm.$setPristine();
 
@@ -308,6 +311,9 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     $scope.username = "";
     $rootScope.messagesOpen = false;
 
+    $scope.messages = [];
+    $scope.messageToSend = "";
+
     $scope.$on('openMessages', function(event, args)
     {
         $scope.openMessages(args.username);
@@ -315,12 +321,106 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
 
     $scope.openMessages = function(username)
     {
-        $scope.username = username;
-        $rootScope.messagesOpen = true;
+        if ($rootScope.messagesOpen === false)
+        {
+            $scope.username = username;
+            $rootScope.messagesOpen = true;
+            $scope.getMessages(0, 50, true);
+        }
+        else
+        {
+            $scope.crossFadeMessages(username);
+        }
     };
 
     $scope.closeMessages = function()
     {
         $rootScope.messagesOpen = false;
     };
+
+    $scope.getMessages = function (first, last, clear)
+    {
+        $http({
+            method: "GET",
+            url: $rootScope.baseUrl + ":9000" + "/messages?session=" + $rootScope.session + "&user=" + $scope.username + "&first=" + first +"&last=" + last
+        })
+        .success(function (data, status, headers, config)
+        {
+            if ($('.messages-container').hasClass('fade-out'))
+            {
+                $('.messages-container').removeClass('fade-out');
+            }
+
+            if (!clear)
+            {
+                $scope.messages = data.messages.concat($scope.messages);
+            }
+            else
+            {
+                $scope.messages = data.messages;
+            }
+
+            $log.info($scope.messages);
+
+            for (var i = $scope.messages.length - 2; i >= 0; i--)
+            {
+                if ($scope.messages[i + 1].senderName == $scope.messages[i].senderName)
+                {
+                    $scope.messages[i].appendMessage = true;
+                }
+            }
+
+            $log.info($scope.messages);
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    };
+    
+    $scope.submitMessage = function ()
+    {
+        $('#message-input-box').val('');
+
+        $http({
+            method: "POST",
+            url: $rootScope.baseUrl + ":9000" + "/message",
+            data:
+            {
+                "session_id": $rootScope.session,
+
+                "from": $rootScope.username,
+                "to": $scope.username,
+                "message": $scope.messageToSend
+            }
+        })
+        .success(function (data, status, headers, config)
+        {
+            $scope.getMessages(0, 0, false);
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    };
+
+    $scope.crossFadeMessages = function (username)
+    {
+        $('.messages-container').addClass('fade-out');
+
+        setTimeout(function ()
+        {
+            $scope.username = username;
+            $scope.getMessages(0, 50, true);
+
+        }, 250);
+    }
+
 }]);
+
+function nl2br(str, is_xhtml)
+{
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
+
+    return (str + '')
+        .replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
