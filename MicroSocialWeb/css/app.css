@@ -103,7 +103,7 @@ div#login {
   top: 60px;
   width: 300px;
   bottom: 0px;
-  background-color: #ffffff;
+  background-color: #f0f0f0;
   transition: left 0.5s ease; }
   #main #messages-pane.slide-out {
     left: -50px; }
@@ -128,6 +128,22 @@ div#login {
     #main #messages-pane .messages-container.fade-out {
       opacity: 0;
       top: 80px; }
+    #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-enter, #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-leave {
+      transition: 0.5s all ease; }
+    #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-enter, #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-leave.ng-leave-active {
+      opacity: 0;
+      left: 50px; }
+    #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-leave, #main #messages-pane .messages-container:not(.no-animation) .message:not(.right-side).ng-enter.ng-enter-active {
+      opacity: 1;
+      left: 0; }
+    #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-enter, #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-leave {
+      transition: 0.5s all ease; }
+    #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-enter, #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-leave.ng-leave-active {
+      opacity: 0;
+      left: -50px; }
+    #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-leave, #main #messages-pane .messages-container:not(.no-animation) .message.right-side.ng-enter.ng-enter-active {
+      opacity: 1;
+      left: 0; }
     #main #messages-pane .messages-container .messages {
       display: flex;
       flex-direction: column-reverse;
@@ -135,28 +151,42 @@ div#login {
       #main #messages-pane .messages-container .messages .message {
         position: relative;
         height: 35px; }
+        #main #messages-pane .messages-container .messages .message .message-body {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          max-width: 230px; }
         #main #messages-pane .messages-container .messages .message:not(.right-side) .avatar {
-          position: relative; }
+          position: absolute;
+          left: 9px;
+          top: 5.5px; }
           #main #messages-pane .messages-container .messages .message:not(.right-side) .avatar img {
-            height: 35px;
-            width: 35px; }
+            height: 26px;
+            width: 26px;
+            border-radius: 13px; }
         #main #messages-pane .messages-container .messages .message:not(.right-side) .message-body {
           position: absolute;
           left: 40px;
           bottom: 3px;
-          font-size: 20px; }
+          font-size: 15px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 2px 5px 2px 5px; }
         #main #messages-pane .messages-container .messages .message.right-side .avatar {
           position: absolute;
-          right: 0;
-          top: 0; }
+          right: 9px;
+          top: 5.5px; }
           #main #messages-pane .messages-container .messages .message.right-side .avatar img {
-            height: 35px;
-            width: 35px; }
+            height: 26px;
+            width: 26px;
+            border-radius: 13px; }
         #main #messages-pane .messages-container .messages .message.right-side .message-body {
           position: absolute;
           right: 40px !important;
           bottom: 3px;
-          font-size: 20px; }
+          font-size: 15px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 2px 5px 2px 5px;
+          background-color: #f9f9f9; }
   #main #messages-pane .message-input {
     position: absolute;
     bottom: 0;

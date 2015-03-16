@@ -407,6 +407,12 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     $scope.crossFadeMessages = function (username)
     {
         $('.messages-container').addClass('fade-out');
+        $('.messages-container').addClass('no-animation');
+
+        setTimeout(function()
+        {
+            $('.messages-container').removeClass('no-animation');
+        }, 1000);
 
         setTimeout(function ()
         {
