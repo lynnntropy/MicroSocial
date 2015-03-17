@@ -104,7 +104,14 @@ namespace MicroSocialServer.Resources
                     json["messages"] = JToken.FromObject(messages);
 
                     dbManager.Close();
-                    this.SendJsonResponse(context, json);
+
+                    
+
+                    //json.ToString()
+                    this.SendTextResponse(context, json.ToString(), Encoding.UTF8);
+
+                    //context.Response.ContentEncoding = Encoding.UTF8;
+                    //this.SendJsonResponse(context, json);
                 }
                 else
             {

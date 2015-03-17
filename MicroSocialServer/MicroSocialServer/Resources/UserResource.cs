@@ -85,7 +85,8 @@ namespace MicroSocialServer
             //response.Add("users", Newtonsoft.Json.JsonConvert.SerializeObject(users));
             response["users"] = JToken.FromObject(users);
 
-            this.SendJsonResponse(context, response);
+            //this.SendJsonResponse(context, response);
+            this.SendTextResponse(context, response.ToString(), Encoding.UTF8);
         }
 
         [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session$")]
@@ -111,7 +112,8 @@ namespace MicroSocialServer
                 JObject response = new JObject();
                 response["session_id"] = JToken.FromObject(sessionId);
 
-                this.SendJsonResponse(context, response);
+                //this.SendJsonResponse(context, response);
+                this.SendTextResponse(context, response.ToString(), Encoding.UTF8);
             }
             else
             {
@@ -177,7 +179,8 @@ namespace MicroSocialServer
                     response["username"] = JToken.FromObject(dbManager.GetUserFromSession(sessionId).username);
 
                     dbManager.Close();
-                    this.SendJsonResponse(context, response);
+                    //this.SendJsonResponse(context, response);
+                    this.SendTextResponse(context, response.ToString(), Encoding.UTF8);
                 }
                 else
                 {

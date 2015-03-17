@@ -45,7 +45,8 @@ namespace MicroSocialServer.Resources
                 var json = new JObject();
                 json["feed"] = JToken.FromObject(statuses);
 
-                this.SendJsonResponse(context, json);
+                //this.SendJsonResponse(context, json);
+                this.SendTextResponse(context, json.ToString(), Encoding.UTF8);
             }
             else
             {
