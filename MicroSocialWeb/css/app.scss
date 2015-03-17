@@ -240,6 +240,7 @@ div#login
       bottom: 50px;
 
       overflow: auto;
+      overflow-x: hidden;
 
       transition: all 0.2s ease;
       opacity: 1;
@@ -315,15 +316,19 @@ div#login
 
         .message {
           position: relative;
-          height: 35px;
+          min-height: 35px;
+
+          padding-top: 5px;
 
           .message-body
           {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+//            text-overflow: ellipsis;
+//            text-overflow:
+//            white-space: normal;
+//            overflow: hidden;
 
             max-width: $messages-width - 70px;
+            word-wrap: break-word;
           }
 
           &:not(.right-side) {
@@ -340,9 +345,16 @@ div#login
             }
 
             .message-body {
-              position: absolute;
-              left: 40px;
-              bottom: 3px;
+//              position: relative;
+              display: inline-block;
+//              left: 40px;
+//              bottom: 3px;
+
+//              display: block;
+              margin-left: 40px;
+              margin-bottom: 1px;
+
+//              min-width: 50px;
 
               font-size: 15px;
 
@@ -369,10 +381,13 @@ div#login
             }
 
             .message-body {
-              position: absolute;
+              position: relative;
               //            left: none;
-              right: 40px !important;
-              bottom: 3px;
+//              right: 40px !important;
+//              bottom: 3px;
+              float: right;
+              margin-right: 40px;
+              margin-bottom: 4px;
 
               font-size: 15px;
 

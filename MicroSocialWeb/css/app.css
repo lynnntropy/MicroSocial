@@ -123,6 +123,7 @@ div#login {
     top: 40px;
     bottom: 50px;
     overflow: auto;
+    overflow-x: hidden;
     transition: all 0.2s ease;
     opacity: 1; }
     #main #messages-pane .messages-container.fade-out {
@@ -150,12 +151,11 @@ div#login {
       padding-bottom: 15px; }
       #main #messages-pane .messages-container .messages .message {
         position: relative;
-        height: 35px; }
+        min-height: 35px;
+        padding-top: 5px; }
         #main #messages-pane .messages-container .messages .message .message-body {
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          max-width: 230px; }
+          max-width: 230px;
+          word-wrap: break-word; }
         #main #messages-pane .messages-container .messages .message:not(.right-side) .avatar {
           position: absolute;
           left: 9px;
@@ -165,9 +165,9 @@ div#login {
             width: 26px;
             border-radius: 13px; }
         #main #messages-pane .messages-container .messages .message:not(.right-side) .message-body {
-          position: absolute;
-          left: 40px;
-          bottom: 3px;
+          display: inline-block;
+          margin-left: 40px;
+          margin-bottom: 1px;
           font-size: 15px;
           border: 1px solid rgba(0, 0, 0, 0.1);
           padding: 2px 5px 2px 5px; }
@@ -180,9 +180,10 @@ div#login {
             width: 26px;
             border-radius: 13px; }
         #main #messages-pane .messages-container .messages .message.right-side .message-body {
-          position: absolute;
-          right: 40px !important;
-          bottom: 3px;
+          position: relative;
+          float: right;
+          margin-right: 40px;
+          margin-bottom: 4px;
           font-size: 15px;
           border: 1px solid rgba(0, 0, 0, 0.1);
           padding: 2px 5px 2px 5px;

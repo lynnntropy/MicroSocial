@@ -21,6 +21,11 @@ microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvi
     });
 }]);
 
+microSocialApp.config(function($httpProvider) {
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
+});
+
+
 microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', function ($scope, $rootScope, $http, $log, $location, usSpinnerService)
 {
     $rootScope.baseUrl = $location.absUrl();
@@ -381,38 +386,42 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     
     $scope.submitMessage = function ()
     {
-        $('#message-input-box').val('');
+        if ($scope.messageToSend.trim().length > 0)
+        {
+            $('#message-input-box').val('');
 
-        $http({
-            method: "POST",
-            url: $rootScope.baseUrl + ":9000" + "/message",
-            data:
+            $http({
+                method: "POST",
+                url: $rootScope.baseUrl + ":9000" + "/message",
+                data: {
+                    "session_id": $rootScope.session,
+
+                    "from": $rootScope.username,
+                    "to": $scope.username,
+                    "message": $scope.messageToSend
+                }
+            })
+            .success(function (data, status, headers, config)
             {
-                "session_id": $rootScope.session,
+                $scope.getMessages(0, 0, false);
+                $scope.messageToSend = "";
 
-                "from": $rootScope.username,
-                "to": $scope.username,
-                "message": $scope.messageToSend
-            }
-        })
-        .success(function (data, status, headers, config)
-        {
-            $scope.getMessages(0, 0, false);
-        }).error(function (data, status, headers, config)
-        {
-            $log.info(data);
-        });
+            }).error(function (data, status, headers, config)
+            {
+                $log.info(data);
+            });
+        }
     };
 
     $scope.crossFadeMessages = function (username)
     {
         $('.messages-container').addClass('fade-out');
-        $('.messages-container').addClass('no-animation');
 
+        $('.messages-container').addClass('no-animation');
         setTimeout(function()
         {
             $('.messages-container').removeClass('no-animation');
-        }, 1000);
+        }, 500);
 
         setTimeout(function ()
         {
@@ -420,7 +429,61 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
             $scope.getMessages(0, 50, true);
 
         }, 250);
-    }
+    };
+
+    $scope.socketIsOpen = false;
+    $scope.openSocket = function()
+    {
+        var domain = $rootScope.baseUrl.substring(7, $rootScope.baseUrl.length);
+        $scope.socket = new WebSocket("ws://" + domain  +":9001/chat");
+
+        var conversationStarted = false;
+
+        $scope.socket.onopen = function (event)
+        {
+            $scope.socketIsOpen = true;
+            $scope.socket.send($scope.username);
+            setTimeout(function ()
+            {
+                $scope.socket.send($rootScope.session);
+
+            }, 1000);
+        };
+
+        $scope.socket.onmessage = function (event)
+        {
+            $log.info("Socket message: " + event.data);
+
+            if (conversationStarted)
+            {
+                $scope.getMessages(0, 0, false);
+            }
+            else
+            {
+                var authenticatedMessage = "Authenticated";
+                if (event.data.substring(0, authenticatedMessage.length) === authenticatedMessage)
+                {
+                    conversationStarted = true;
+                }
+            }
+        }
+    };
+
+    $scope.closeSocket = function()
+    {
+        $scope.socket.close();
+        $scope.socketIsOpen = false;
+    };
+
+    $scope.$watch('username', function(newVal, oldVal)
+    {
+        if ($scope.socketIsOpen)
+        {
+            $scope.closeSocket();
+        }
+
+        $scope.openSocket();
+    });
 
 }]);
 
