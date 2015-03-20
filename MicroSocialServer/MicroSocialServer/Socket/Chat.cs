@@ -66,7 +66,17 @@ namespace MicroSocialServer.Socket
             }
             else
             {
-                var sessionId = int.Parse(message);
+                int sessionId;
+
+                try
+                {
+                    sessionId = int.Parse(message);
+                }
+                catch (Exception)
+                {
+                    return;
+                }
+                
 
                 var databaseManager = new DatabaseManager();
                 databaseManager.Connect();

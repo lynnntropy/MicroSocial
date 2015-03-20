@@ -119,10 +119,7 @@ div#login
 
 #main
 {
-//  position: relative;
-
   $navbar-height: 60px;
-
   .navbar
   {
     position: absolute;
@@ -133,17 +130,73 @@ div#login
     left: 0;
     right: 0;
     top: 0;
-    background-color: #f6f6f6;
+    background-color: #536dfe;
+
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
 
     .logo
     {
-      height: 50%;
+      img
+      {
+        height: 30px;
+        margin: auto;
+        position: absolute;
+        left:0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+    }
 
-      position: relative;
-      top: 30px;
-      transform: translateY(-50%);
+    .user-profile
+    {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      right: 9px;
 
-      margin-left: 15px;
+      width: 300px;
+      height: $navbar-height * 0.7;
+
+      color: #ffffff;
+
+//      &:hover
+//      {
+//        background-color: rgba(255, 255, 255, 0.1);
+//      }
+
+      .avatar
+      {
+        img
+        {
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          right: 0;
+
+          height: 100%;
+        }
+      }
+
+      .name
+      {
+        position: absolute;
+
+        top: 0px;
+        right: 50px;
+      }
+
+      .email
+      {
+        position: absolute;
+
+        top: 17px;
+        right: 50px;
+
+        opacity: 0.6;
+      }
     }
   }
 
@@ -160,10 +213,12 @@ div#login
 
     .user
     {
+      height: 55px;
+
       position: relative;
       cursor: pointer;
 
-      border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+      border-bottom: solid 1px rgba(0, 0, 0, 0.009);
 
       transition: background-color 0.2s ease-out;
 
@@ -171,12 +226,24 @@ div#login
       {
         background-color: rgba(0, 0, 0, 0.075);
       }
+
       .avatar
       {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        left: 5px;
+
         img
         {
-          width: 50px;
-          height: 50px;
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+
+          height: 80%;
+          border-radius: 2px;
         }
       }
 
@@ -184,7 +251,16 @@ div#login
       {
         position: absolute;
         left: 55px;
-        top: 0px;
+        top: 5px;
+      }
+
+      .email
+      {
+        position: absolute;
+        left: 55px;
+        top: 22px;
+
+        opacity: 0.6;
       }
     }
   }
@@ -218,20 +294,21 @@ div#login
     {
       height: 40px;
 
-      span.close-button
+      .close-button
       {
         position: absolute;
-        right: 10px;
-        top: 10px;
+        right: 20px;
+        top: 5px;
 
         opacity: 0.75;
-        font-size: 20px;
+        font-size: 30px;
 
         cursor: pointer;
       }
     }
 
-    .messages-container {
+    .messages-container
+    {
 
       position: absolute;
       left: 0;
@@ -322,10 +399,6 @@ div#login
 
           .message-body
           {
-//            text-overflow: ellipsis;
-//            text-overflow:
-//            white-space: normal;
-//            overflow: hidden;
 
             max-width: $messages-width - 70px;
             word-wrap: break-word;
@@ -396,6 +469,20 @@ div#login
               padding: 2px 5px 2px 5px;
               background-color: #f9f9f9;
             }
+          }
+        }
+
+        .load-more
+        {
+          margin-bottom: 20px;
+          text-align: center;
+          cursor: pointer;
+
+          transition: opacity 0.3s ease;
+
+          &:hover
+          {
+            opacity: 0.7;
           }
         }
       }
@@ -493,6 +580,9 @@ div#login
         box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
 
         margin-bottom: 20px;
+
+//        opacity: 0;
+//        transition: 0.5s all ease;
 
         &.ng-enter,
         &.ng-leave

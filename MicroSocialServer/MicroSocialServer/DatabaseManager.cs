@@ -174,10 +174,23 @@ namespace MicroSocialServer
             if (reader.HasRows)
             {
                 reader.Read();
+                string username = (string)reader["username"];
+
+                var userSql = String.Format(
+                    "SELECT * FROM Users WHERE username='{0}'",
+                    username);
+
+                var userCommand = new SQLiteCommand(userSql, _databaseConnection);
+                var userReader = userCommand.ExecuteReader();
+                userReader.Read();
+
                 var user = new User();
-                user.username = (string) reader["username"];
+                user.username = (string) userReader["username"];
+                user.fullName = (string) userReader["full_name"];
+                user.email = (string) userReader["email"];
 
                 reader.Close();
+                userReader.Close();
                 return user;
             }
             else

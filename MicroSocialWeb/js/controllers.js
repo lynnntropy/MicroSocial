@@ -21,6 +21,15 @@ microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvi
     });
 }]);
 
+angular.module('ui.gravatar').config([
+    'gravatarServiceProvider', function(gravatarServiceProvider) {
+        gravatarServiceProvider.defaults = {
+            size     : 100,
+            "default": 'retro'  // Mystery man as default for missing avatars
+        };
+    }
+]);
+
 microSocialApp.config(function($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
 });
@@ -344,7 +353,7 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
         $rootScope.messagesOpen = false;
     };
 
-    $scope.getMessages = function (first, last, clear)
+    $scope.getMessages = function (first, last, clear, addToBack)
     {
         $http({
             method: "GET",
@@ -359,7 +368,14 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
 
             if (!clear)
             {
-                $scope.messages = data.messages.concat($scope.messages);
+                if (!addToBack)
+                {
+                    $scope.messages = data.messages.concat($scope.messages);
+                }
+                else
+                {
+                    $scope.messages = $scope.messages.concat(data.messages);
+                }
             }
             else
             {
@@ -484,7 +500,38 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
 
         $scope.openSocket();
     });
+    
+    $scope.loadMore = function ()
+    {
+        $scope.getMessages($scope.messages.length, $scope.messages.length + 50, false, true);
+    }
 
+}]);
+
+microSocialApp.controller('NavbarController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+//    var userProfile = {};
+
+    $scope.$on('loginCompleted', function (event)
+    {
+        $http({
+            method: "POST",
+            url: $rootScope.baseUrl + ":9000" + "/session/getUser",
+            data:
+            {
+                "session_id": $rootScope.session
+            }
+        })
+        .success(function (data, status, headers, config)
+        {
+            $log.info(data);
+            $scope.userProfile = data;
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    });
 }]);
 
 function nl2br(str, is_xhtml)

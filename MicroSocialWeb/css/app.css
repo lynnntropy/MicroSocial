@@ -67,13 +67,41 @@ div#login {
   left: 0;
   right: 0;
   top: 0;
-  background-color: #f6f6f6; }
-  #main .navbar .logo {
-    height: 50%;
-    position: relative;
-    top: 30px;
-    transform: translateY(-50%);
-    margin-left: 15px; }
+  background-color: #536dfe;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55); }
+  #main .navbar .logo img {
+    height: 30px;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0; }
+  #main .navbar .user-profile {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 9px;
+    width: 300px;
+    height: 42px;
+    color: #ffffff; }
+    #main .navbar .user-profile .avatar img {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      height: 100%; }
+    #main .navbar .user-profile .name {
+      position: absolute;
+      top: 0px;
+      right: 50px; }
+    #main .navbar .user-profile .email {
+      position: absolute;
+      top: 17px;
+      right: 50px;
+      opacity: 0.6; }
 #main #user-list {
   position: absolute;
   width: 250px;
@@ -83,19 +111,35 @@ div#login {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   z-index: 10; }
   #main #user-list .user {
+    height: 55px;
     position: relative;
     cursor: pointer;
-    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    border-bottom: solid 1px rgba(0, 0, 0, 0.009);
     transition: background-color 0.2s ease-out; }
     #main #user-list .user:hover {
       background-color: rgba(0, 0, 0, 0.075); }
-    #main #user-list .user .avatar img {
-      width: 50px;
-      height: 50px; }
+    #main #user-list .user .avatar {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      bottom: 0;
+      left: 5px; }
+      #main #user-list .user .avatar img {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        height: 80%;
+        border-radius: 2px; }
     #main #user-list .user .name {
       position: absolute;
       left: 55px;
-      top: 0px; }
+      top: 5px; }
+    #main #user-list .user .email {
+      position: absolute;
+      left: 55px;
+      top: 22px;
+      opacity: 0.6; }
 #main #messages-pane {
   position: absolute;
   z-index: 5;
@@ -109,12 +153,12 @@ div#login {
     left: -50px; }
   #main #messages-pane .header {
     height: 40px; }
-    #main #messages-pane .header span.close-button {
+    #main #messages-pane .header .close-button {
       position: absolute;
-      right: 10px;
-      top: 10px;
+      right: 20px;
+      top: 5px;
       opacity: 0.75;
-      font-size: 20px;
+      font-size: 30px;
       cursor: pointer; }
   #main #messages-pane .messages-container {
     position: absolute;
@@ -188,6 +232,13 @@ div#login {
           border: 1px solid rgba(0, 0, 0, 0.1);
           padding: 2px 5px 2px 5px;
           background-color: #f9f9f9; }
+      #main #messages-pane .messages-container .messages .load-more {
+        margin-bottom: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: opacity 0.3s ease; }
+        #main #messages-pane .messages-container .messages .load-more:hover {
+          opacity: 0.7; }
   #main #messages-pane .message-input {
     position: absolute;
     bottom: 0;

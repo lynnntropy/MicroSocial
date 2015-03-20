@@ -190,5 +190,42 @@ namespace MicroSocialServer
                 }
             }
         }
+
+        [RESTRoute(Method = HttpMethod.POST, PathInfo = @"^/session/getUser$")]
+        public void GetUserFromSession(HttpListenerContext context)
+        {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+            JObject jsonPayload = GetJsonPayload(context.Request);
+
+            int sessionId = int.Parse(jsonPayload.GetValue("session_id").ToString());
+
+            if (sessionId != null)
+            {
+                DatabaseManager dbManager = new DatabaseManager();
+                dbManager.Connect();
+
+                if (dbManager.CheckSession(sessionId))
+                {
+                    context.Response.StatusCode = 200; // 200 OK
+                    JObject response = new JObject();
+                    //response.Add("users", Newtonsoft.Json.JsonConvert.SerializeObject(users));
+                    var user = dbManager.GetUserFromSession(sessionId);
+                    response = JObject.FromObject(user);
+                    dbManager.Close();
+
+                    //this.SendJsonResponse(context, response);
+                    this.SendTextResponse(context, response.ToString(), Encoding.UTF8);
+                }
+                else
+                {
+                    dbManager.Close();
+                    context.Response.StatusCode = 401;
+                    this.SendTextResponse(context, "Invalid session.");
+                }
+            }
+        }
     }
 }

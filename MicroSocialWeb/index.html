@@ -6,6 +6,7 @@
     <title>MicroSocial</title>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
     <!--<link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.min.css">-->
     <link rel="stylesheet" href="css/app.css">
 
@@ -21,7 +22,6 @@
     <script src="bower_components/angular-scroll-glue/src/scrollglue.js"></script>
 
     <script src="js/jquery.timeago.js"></script>
-
     <script src="js/controllers.js"></script>
 </head>
 
@@ -52,20 +52,34 @@
     </div>
 
     <div id="main">
-        <div class="navbar">
-            <img class="logo" src="img/MicroSocialLogoDark.png">
+        <div class="navbar" ng-controller="NavbarController">
+            <div class="logo">
+                <img src="img/MicroSocialLogo.png">
+            </div>
+            <div class="user-profile">
+                <div class="avatar">
+                    <img gravatar-src="'{{userProfile.email}}'" gravatar-size="100">
+                </div>
+                <div class="name">
+                    {{userProfile.fullName}}
+                </div>
+                <div class="email">
+                    {{userProfile.email}}
+                </div>
+            </div>
         </div>
 
         <div id="user-list" ng-controller="UserListController">
             <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username)">
-                <div class="avatar"><img gravatar-src="'{{user.email}}'" gravatar-size="100"/></div>
+                <div class="avatar"><img gravatar-src="'{{user.email}}'"/></div>
                 <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>
+                <div class="email">{{user.email}}</div>
             </div>
         </div>
 
         <div id="messages-pane" ng-controller="MessagesController" ng-class="{'slide-out': !messagesOpen}">
             <div class="header">
-                <span class="glyphicon glyphicon-remove close-button" aria-hidden="true" ng-click="closeMessages()"></span>
+                <i class="fa fa-angle-left close-button" aria-hidden="true" ng-click="closeMessages()"></i>
             </div>
 
             <div class="messages-container" scroll-glue>
@@ -73,6 +87,9 @@
                     <div class="message" ng-repeat="message in messages" ng-class="{'right-side': username != message.senderName}">
                         <div class="avatar" ng-hide="message.appendMessage"><img gravatar-src="'{{message.senderEmail}}'" gravatar-size="45"/></div>
                         <div class="message-body">{{message.messageBody}}</div>
+                    </div>
+                    <div class="load-more" ng-show="messages.length > 0" ng-click="loadMore()">
+                        Load more messages..
                     </div>
                 </div>
             </div>
@@ -94,7 +111,7 @@
                 </div>
 
                 <div class="post" ng-repeat="post in posts | orderBy:'-time'">
-                    <div class="avatar"><img gravatar-src="'{{post.poster.email}}'" gravatar-size="100"/></div>
+                    <div class="avatar"><img gravatar-src="'{{post.poster.email}}'"/></div>
                     <div class="name">{{post.poster.fullName}}</div>
                     <div class="time"><time class="timeago" datetime="{{post.time + '+00:00'}}"></time></div>
                     <div class="status-body">{{post.statusContent}}</div>
