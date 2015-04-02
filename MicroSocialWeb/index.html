@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="css/app.css">
 
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js"></script>
     <!--<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>-->
@@ -20,6 +22,7 @@
     <script src="bower_components/angular-gravatar/build/md5.min.js"></script>
     <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
     <script src="bower_components/angular-scroll-glue/src/scrollglue.js"></script>
+    <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
 
     <script src="js/jquery.timeago.js"></script>
     <script src="js/controllers.js"></script>
@@ -56,7 +59,7 @@
             <div class="logo">
                 <img src="img/MicroSocialLogo.png">
             </div>
-            <div class="user-profile">
+            <div class="user-profile" ng-class="{'show-logout': logoutHovered || settingsHovered}">
                 <div class="avatar">
                     <img gravatar-src="'{{userProfile.email}}'" gravatar-size="100">
                 </div>
@@ -67,10 +70,22 @@
                     {{userProfile.email}}
                 </div>
             </div>
+            <div class="logout-label" ng-class="{'show-logout': logoutHovered}">
+                Log out?
+            </div>
+            <div class="settings-label" ng-class="{'show-settings': settingsHovered}">
+                Preferences
+            </div>
+            <div class="logout">
+                <i class="fa fa-power-off" ng-mouseover="logoutHover()" ng-mouseleave="logoutLeave()" ng-click="logoutClick()"></i>
+            </div>
+            <div class="settings">
+                <i class="fa fa-cog" ng-mouseover="settingsHover()" ng-mouseleave="settingsLeave()" ng-click="settingsClick()"></i>
+            </div>
         </div>
 
         <div id="user-list" ng-controller="UserListController">
-            <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username)">
+            <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username, user.fullName)">
                 <div class="avatar"><img gravatar-src="'{{user.email}}'"/></div>
                 <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>
                 <div class="email">{{user.email}}</div>
@@ -79,6 +94,7 @@
 
         <div id="messages-pane" ng-controller="MessagesController" ng-class="{'slide-out': !messagesOpen}">
             <div class="header">
+                <div class="name">{{messagesOtherUserName}}</div>
                 <i class="fa fa-angle-left close-button" aria-hidden="true" ng-click="closeMessages()"></i>
             </div>
 
@@ -101,12 +117,12 @@
             </div>
         </div>
 
-        <div id="main-window">
-            <div id="feed" ng-controller="FeedController" ng-class="{'full-width': !messagesOpen, 'half-width': messagesOpen}">
+        <div id="main-window" ng-controller="FeedController">
+            <div id="feed" ng-class="{'half-width': messagesOpen}" ng-show="!settingsOpened">
                 <div class="status-form" ng-controller="StatusFormController">
                     <form name="statusForm">
                         <textarea placeholder="Write a post.." ng-model="status.body" class="form-control" rows="2" id="status-field"></textarea>
-                        <button id="status-submit" ng-click="submitStatus()" ng-disabled="statusForm.$pristine" type="submit" class="btn btn-small btn-default cssSlideUp">Submit</button>
+                        <button id="status-submit" ng-click="submitStatus()" ng-disabled="statusForm.$pristine" type="submit" class="btn btn-small btn-default">Submit</button>
                     </form>
                 </div>
 
@@ -115,6 +131,22 @@
                     <div class="name">{{post.poster.fullName}}</div>
                     <div class="time"><time class="timeago" datetime="{{post.time + '+00:00'}}"></time></div>
                     <div class="status-body">{{post.statusContent}}</div>
+                </div>
+
+                <div class="load-more" ng-click="loadMore()">
+                    Load more posts..
+                </div>
+            </div>
+            <div id="settings" ng-class="{'half-width': messagesOpen}" ng-show="settingsOpened">
+                <div class="settings-section gravatar-settings">
+                    <div class="section-name">Gravatar Settings</div>
+                    <img gravatar-src="'{{userProfile.email}}'">
+                    <div class="image-caption">
+                        Current avatar
+                    </div>
+                    <div class="gravatar-link">
+                        <a href="http://en.gravatar.com/"> Go to Gravatar </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -127,6 +127,10 @@ namespace MicroSocialServer
         [RESTRoute(Method = HttpMethod.DELETE, PathInfo = @"^/session")]
         public void EndSession(HttpListenerContext context)
         {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             JObject jsonPayload = GetJsonPayload(context.Request);
 
             String username = jsonPayload.GetValue("username").ToString();

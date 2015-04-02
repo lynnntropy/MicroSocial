@@ -67,6 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\CORSResource.cs" />
     <Compile Include="Resources\MessagesResource.cs" />
+    <Compile Include="Resources\MiscResource.cs" />
     <Compile Include="Resources\StatusResource.cs" />
     <Compile Include="Schema\Message.cs" />
     <Compile Include="Schema\Status.cs" />

@@ -1,702 +1,959 @@
-div#login
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700&subset=latin,latin-ext);
+
+body
 {
-  z-index: 1000;
-  position: fixed;
-  padding: 0;
-  margin: 0;
+  font-family: 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
 
-  width: 100%;
-  height: 100%;
-
-  background-color: #212121;
-
-  transition: opacity 1s ease;
-
-  &.loginEnded
+  div#login
   {
-    opacity: 0;
-  }
+    z-index: 1000;
+    position: fixed;
+    padding: 0;
+    margin: 0;
 
-  div#login-form
-  {
-    width: 250px;
-    opacity: 1;
+    width: 100%;
+    height: 100%;
 
-    margin: 0 auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+    background-color: #212121;
 
-    text-align: center;
+    transition: opacity 1s ease;
 
-    transition: opacity 0.35s ease;
-
-    &.loading
+    &.loginEnded
     {
       opacity: 0;
     }
 
-    #login-spinner,
-    #login-spinner *
+    div#login-form
     {
-      opacity: 0 !important;
+      width: 250px;
+      opacity: 1;
+
+      margin: 0 auto;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+
+      text-align: center;
 
       transition: opacity 0.35s ease;
 
-      &.showspinner
-      {
-        opacity: 1;
-      }
-    }
-
-    .ng-hide-add, .ng-hide-remove
-    {
-      /* ensure visibility during the transition */
-      display: block !important; /* yes, important */
-    }
-
-    .cssSlideUp
-    {
-      transition: all .7s ease;
-      height: 90px;
-      overflow: hidden;
-    }
-    .cssSlideUp.ng-hide
-    {
-      height:0;
-    }
-
-    .logo
-    {
-      width: 200px;
-      margin-bottom: 20px;
-    }
-
-    .form-control
-    {
-      margin-bottom: 5px;
-      border-radius: 0;
-    }
-
-    .form-control.ng-invalid
-    {
-      background-color: rgb(255, 200, 200);
-    }
-
-    #submit-login
-    {
-      margin-top: 15px;
-      width: 100%;
-      border-radius: 0;
-    }
-
-    .register
-    {
-      color: #eee;
-      margin-top: 10px;
-
-      cursor: pointer;
-
-      transition: color 0.3s ease;
-
-      &:hover
-      {
-        color: #999;
-      }
-    }
-
-    #register-form
-    {
-    }
-
-    .alert
-    {
-      margin-top: 0px;
-//      height: 100px;
-    }
-  }
-}
-
-#main
-{
-  $navbar-height: 60px;
-  .navbar
-  {
-    position: absolute;
-    z-index: 100;
-    border-radius: 0;
-
-    height: $navbar-height;
-    left: 0;
-    right: 0;
-    top: 0;
-    background-color: #536dfe;
-
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
-
-    .logo
-    {
-      img
-      {
-        height: 30px;
-        margin: auto;
-        position: absolute;
-        left:0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-      }
-    }
-
-    .user-profile
-    {
-      position: absolute;
-      margin: auto;
-      top: 0;
-      bottom: 0;
-      right: 9px;
-
-      width: 300px;
-      height: $navbar-height * 0.7;
-
-      color: #ffffff;
-
-//      &:hover
-//      {
-//        background-color: rgba(255, 255, 255, 0.1);
-//      }
-
-      .avatar
-      {
-        img
-        {
-          position: absolute;
-          margin: auto;
-          top: 0;
-          bottom: 0;
-          right: 0;
-
-          height: 100%;
-        }
-      }
-
-      .name
-      {
-        position: absolute;
-
-        top: 0px;
-        right: 50px;
-      }
-
-      .email
-      {
-        position: absolute;
-
-        top: 17px;
-        right: 50px;
-
-        opacity: 0.6;
-      }
-    }
-  }
-
-  #user-list
-  {
-    position: absolute;
-    width: 250px;
-    top: $navbar-height;
-    bottom: 0px;
-    background-color: #eee;
-
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-
-    .user
-    {
-      height: 55px;
-
-      position: relative;
-      cursor: pointer;
-
-      border-bottom: solid 1px rgba(0, 0, 0, 0.009);
-
-      transition: background-color 0.2s ease-out;
-
-      &:hover
-      {
-        background-color: rgba(0, 0, 0, 0.075);
-      }
-
-      .avatar
-      {
-        position: absolute;
-        margin: auto;
-        top: 0;
-        bottom: 0;
-        left: 5px;
-
-        img
-        {
-          position: absolute;
-          margin: auto;
-          top: 0;
-          bottom: 0;
-
-          height: 80%;
-          border-radius: 2px;
-        }
-      }
-
-      .name
-      {
-        position: absolute;
-        left: 55px;
-        top: 5px;
-      }
-
-      .email
-      {
-        position: absolute;
-        left: 55px;
-        top: 22px;
-
-        opacity: 0.6;
-      }
-    }
-  }
-
-  $messages-width: 300px;
-  #messages-pane
-  {
-    position: absolute;
-
-    //      $width: 400px;
-
-    z-index: 5;
-
-    left: 250px;
-    top: $navbar-height;
-
-    width: $messages-width;
-//    top: 0px;
-    bottom: 0px;
-
-    background-color: #f0f0f0;
-
-    transition: left 0.5s ease;
-
-    &.slide-out
-    {
-      left: 250px - $messages-width;
-    }
-
-    .header
-    {
-      height: 40px;
-
-      .close-button
-      {
-        position: absolute;
-        right: 20px;
-        top: 5px;
-
-        opacity: 0.75;
-        font-size: 30px;
-
-        cursor: pointer;
-      }
-    }
-
-    .messages-container
-    {
-
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 40px;
-      bottom: 50px;
-
-      overflow: auto;
-      overflow-x: hidden;
-
-      transition: all 0.2s ease;
-      opacity: 1;
-      &.fade-out
+      &.loading
       {
         opacity: 0;
-        top: 80px;
       }
 
-      &:not(.no-animation)
+      #login-spinner,
+      #login-spinner *
       {
-        .message
+        opacity: 0 !important;
+
+        transition: opacity 0.35s ease;
+
+        &.showspinner
         {
-          &:not(.right-side)
-          {
-            &.ng-enter,
-            &.ng-leave
-            {
-              transition: 0.5s all ease;
-            }
-
-            &.ng-enter,
-            &.ng-leave.ng-leave-active
-            {
-              opacity: 0;
-              left: 50px;
-            }
-
-            &.ng-leave,
-            &.ng-enter.ng-enter-active
-            {
-              opacity: 1;
-              left: 0;
-            }
-          }
-
-          &.right-side
-          {
-            &.ng-enter,
-            &.ng-leave
-            {
-              transition: 0.5s all ease;
-            }
-
-            &.ng-enter,
-            &.ng-leave.ng-leave-active
-            {
-              opacity: 0;
-              left: -50px;
-            }
-
-            &.ng-leave,
-            &.ng-enter.ng-enter-active
-            {
-              opacity: 1;
-              left: 0;
-            }
-          }
+          opacity: 1;
         }
       }
 
-      .messages {
-
-//        position: absolute;
-//        bottom: 0;
-//        left: 0;
-//        right: 0;
-
-        display: flex;
-        flex-direction: column-reverse;
-
-        padding-bottom: 15px;
-
-        .message {
-          position: relative;
-          min-height: 35px;
-
-          padding-top: 5px;
-
-          .message-body
-          {
-
-            max-width: $messages-width - 70px;
-            word-wrap: break-word;
-          }
-
-          &:not(.right-side) {
-            .avatar {
-              position: absolute;
-              left: 9px;
-              top: 5.5px;
-
-              img {
-                height: 26px;
-                width: 26px;
-                border-radius: 13px;
-              }
-            }
-
-            .message-body {
-//              position: relative;
-              display: inline-block;
-//              left: 40px;
-//              bottom: 3px;
-
-//              display: block;
-              margin-left: 40px;
-              margin-bottom: 1px;
-
-//              min-width: 50px;
-
-              font-size: 15px;
-
-              border: 1px solid rgba(0, 0, 0, 0.1);
-
-              padding: 2px 5px 2px 5px;
-//              background-color: #f9f9f9;
-            }
-          }
-
-          &.right-side {
-            .avatar {
-              position: absolute;
-              right: 9px;
-              top: 5.5px;
-
-
-
-              img {
-                height: 26px;
-                width: 26px;
-                border-radius: 13px;
-              }
-            }
-
-            .message-body {
-              position: relative;
-              //            left: none;
-//              right: 40px !important;
-//              bottom: 3px;
-              float: right;
-              margin-right: 40px;
-              margin-bottom: 4px;
-
-              font-size: 15px;
-
-              border: 1px solid rgba(0, 0, 0, 0.1);
-
-              padding: 2px 5px 2px 5px;
-              background-color: #f9f9f9;
-            }
-          }
-        }
-
-        .load-more
-        {
-          margin-bottom: 20px;
-          text-align: center;
-          cursor: pointer;
-
-          transition: opacity 0.3s ease;
-
-          &:hover
-          {
-            opacity: 0.7;
-          }
-        }
-      }
-    }
-
-    .message-input
-    {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-//      height: 50px;
-      
-      background-color: #ffffff;
-
-      input
+      .ng-hide-add, .ng-hide-remove
       {
+        /* ensure visibility during the transition */
+        display: block !important; /* yes, important */
+      }
+
+      .cssSlideUp
+      {
+        transition: all .7s ease;
+        height: 90px;
+        overflow: hidden;
+      }
+      .cssSlideUp.ng-hide
+      {
+        height: 0;
+      }
+
+      .logo
+      {
+        width: 200px;
+        margin-bottom: 20px;
+      }
+
+      .form-control
+      {
+        margin-bottom: 5px;
         border-radius: 0;
+      }
+
+      .form-control.ng-invalid
+      {
+        background-color: rgb(255, 200, 200);
+      }
+
+      #submit-login
+      {
+        margin-top: 15px;
+        width: 100%;
+        border-radius: 0;
+      }
+
+      .register
+      {
+        color: #eee;
+        margin-top: 10px;
+
+        cursor: pointer;
+
+        transition: color 0.3s ease;
+
+        &:hover
+        {
+          color: #999;
+        }
+      }
+
+      #register-form
+      {
+      }
+
+      .alert
+      {
+        margin-top: 0px;
+        //      height: 100px;
       }
     }
   }
 
-  #main-window
+  #main
   {
-    position: absolute;
-//    width: 250px;
-    top: $navbar-height;
-    bottom: 0px;
-    right: 0px;
-    left: 250px;
-    background-color: #e6e6e6;
-
-    z-index: 1;
-
-    padding-top: 30px;
-    overflow: auto;
-
-    #feed
+    $navbar-height: 60px;
+    .navbar
     {
       position: absolute;
+      z-index: 100;
+      border-radius: 0;
 
-      transition: left 0.5s ease;
-
+      height: $navbar-height;
       left: 0;
       right: 0;
-//      top: 0;
-//      bottom: 0;
+      top: 0;
+      background-color: #536dfe;
 
-      .post
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55);
+
+      .logo
       {
-        width: 500px;
-      }
-
-      .status-form
-      {
-        width: 545px;
-      }
-
-      &.half-width
-      {
-        left: $messages-width;
-
-        .post
+        img
         {
-          width: 470px;
-        }
-
-        .status-form
-        {
-          width: 500px;
+          height: 30px;
+          margin: auto;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
         }
       }
 
-      .post,
-      .status-form
+      .logout-label
       {
-        transition: all 0.5s ease;
-      }
+        color: #eee;
 
-      .post
-      {
-        position: relative;
+        opacity: 0;
+        position: absolute;
+        margin: auto;
+        right: 120px;
+        top: 0;
+        bottom: 0;
 
-        margin: 0 auto;
+        height: 30px;
+        font-size: 20px;
+        padding: 0;
 
-        background-color: #f3f3f3;
+        transition: opacity 0.3s ease;
 
-        $post-padding: 20px;
-
-        padding-top: $post-padding + 50px;
-        padding-bottom: $post-padding;
-
-        border-radius: 3px;
-
-        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
-
-        margin-bottom: 20px;
-
-//        opacity: 0;
-//        transition: 0.5s all ease;
-
-        &.ng-enter,
-        &.ng-leave
-        {
-          transition: 0.5s all ease;
-        }
-
-        &.ng-enter,
-        &.ng-leave.ng-leave-active
-        {
-          opacity: 0;
-          left: -50px;
-        }
-
-        &.ng-leave,
-        &.ng-enter.ng-enter-active
+        &.show-logout
         {
           opacity: 1;
-          left: 0;
+        }
+      }
+
+      .settings-label
+      {
+        color: #eee;
+
+        opacity: 0;
+        position: absolute;
+        margin: auto;
+        right: 120px;
+        top: 0;
+        bottom: 0;
+
+        height: 30px;
+        font-size: 20px;
+        padding: 0;
+
+        transition: opacity 0.3s ease;
+
+        &.show-settings
+        {
+          opacity: 1;
+        }
+      }
+
+      .user-profile
+      {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        right: 130px;
+
+        width: 300px;
+        height: $navbar-height * 0.7;
+
+        color: #ffffff;
+
+        transition: opacity 0.3s ease;
+
+        &.show-logout
+        {
+          opacity: 0;
         }
 
         .avatar
         {
-          position: absolute;
-          left: $post-padding;
-          top: $post-padding;
-
           img
           {
-            width: 40px;
-            height: 40px;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            right: 0;
+
+            height: 100%;
           }
         }
 
         .name
         {
           position: absolute;
-          left: $post-padding + 45px;
-          top: $post-padding;
+
+          top: 0px;
+          right: 50px;
         }
 
-        .time
+        .email
         {
           position: absolute;
-          left: $post-padding + 45px;
-          top: $post-padding + 20px;
-        }
 
-        .status-body
-        {
-          margin-left: $post-padding;
-          margin-right: $post-padding;
+          top: 17px;
+          right: 50px;
 
-          white-space: pre-line;
+          opacity: 0.6;
         }
       }
 
-      .status-form
+      .logout
       {
-//        position: relative;
-        margin-left: auto;
-        margin-right: auto;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 60px;
 
-//        margin: 0 auto;
-
-//        width: 55%;
-        background-color: #f3f3f3;
-
-        $form-padding: 0px;
-
-        padding-top: $form-padding;
-        padding-bottom: $form-padding;
-
-        border-radius: 3px;
-
-        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
-
-        margin-bottom: 20px;
-
-        overflow: hidden;
-
-        #status-field
+        .fa
         {
-          background-color: rgba(0, 0, 0, 0);
-          border: none;
-          box-shadow: none;
-          resize: none;
-        }
+          color: #eee;
+          font-size: 20px;
+          text-align: center;
+          height: 20px;
+          margin: auto;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
 
-        #status-submit
-        {
-          float: right;
+          cursor: pointer;
+          transition: opacity 0.3s ease;
 
-//          width: 50px;
-//          height: 35px;
-
-          $padding: 4px;
-          padding-left: $padding + 5px;
-          padding-right: $padding + 5px;
-          padding-top: $padding;
-          padding-bottom: $padding;
-
-          margin-right: 5px;
-          margin-bottom: 5px;
-
-          transition: opacity 0.5s ease;
-
-          &[disabled]
+          &:hover
           {
-            opacity: 0;
+            opacity: 0.5;
+          }
+        }
+      }
+
+      .settings
+      {
+        position: absolute;
+        right: 60px;
+        top: 0;
+        bottom: 0;
+        width: 60px;
+
+        .fa
+        {
+          color: #eee;
+          font-size: 20px;
+          text-align: center;
+          height: 20px;
+          margin: auto;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+
+          cursor: pointer;
+          transition: opacity 0.3s ease;
+
+          &:hover
+          {
+            opacity: 0.5;
           }
         }
       }
     }
-  }
 
+    #user-list
+    {
+      position: absolute;
+      width: 250px;
+      top: $navbar-height;
+      bottom: 0px;
+      background-color: #eee;
+
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+
+      .user
+      {
+        height: 55px;
+
+        position: relative;
+        cursor: pointer;
+
+        border-bottom: solid 1px rgba(0, 0, 0, 0.009);
+
+        transition: background-color 0.2s ease-out;
+
+        &:hover
+        {
+          background-color: rgba(0, 0, 0, 0.075);
+        }
+
+        .avatar
+        {
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          left: 5px;
+
+          img
+          {
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+
+            height: 80%;
+            border-radius: 2px;
+          }
+        }
+
+        .name
+        {
+          position: absolute;
+          left: 55px;
+          top: 5px;
+        }
+
+        .email
+        {
+          position: absolute;
+          left: 55px;
+          top: 22px;
+
+          opacity: 0.6;
+        }
+      }
+    }
+
+    $messages-width: 300px;
+    #messages-pane
+    {
+      position: absolute;
+
+      //      $width: 400px;
+
+      z-index: 5;
+
+      left: 250px;
+      top: $navbar-height;
+
+      width: $messages-width;
+      //    top: 0px;
+      bottom: 0px;
+
+      background-color: #f0f0f0;
+
+      transition: left 0.5s ease;
+
+      &.slide-out
+      {
+        left: 250px - $messages-width;
+      }
+
+      .header
+      {
+        height: 40px;
+
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+        .close-button
+        {
+          position: absolute;
+          right: 20px;
+          top: 5px;
+
+          opacity: 0.75;
+          font-size: 30px;
+
+          cursor: pointer;
+        }
+
+        .name
+        {
+          position: absolute;
+          left: 15px;
+          top: 6px;
+
+          opacity: 0.75;
+          font-size: 22px;
+        }
+      }
+
+      .messages-container
+      {
+
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 40px;
+        bottom: 50px;
+
+        overflow: auto;
+        overflow-x: hidden;
+
+        transition: all 0.2s ease;
+        opacity: 1;
+        &.fade-out
+        {
+          opacity: 0;
+          top: 80px;
+        }
+
+        &:not(.no-animation)
+        {
+          .message
+          {
+            &:not(.right-side)
+            {
+              &.ng-enter,
+              &.ng-leave
+              {
+                transition: 0.5s all ease;
+              }
+
+              &.ng-enter,
+              &.ng-leave.ng-leave-active
+              {
+                opacity: 0;
+                left: 50px;
+              }
+
+              &.ng-leave,
+              &.ng-enter.ng-enter-active
+              {
+                opacity: 1;
+                left: 0;
+              }
+            }
+
+            &.right-side
+            {
+              &.ng-enter,
+              &.ng-leave
+              {
+                transition: 0.5s all ease;
+              }
+
+              &.ng-enter,
+              &.ng-leave.ng-leave-active
+              {
+                opacity: 0;
+                left: -50px;
+              }
+
+              &.ng-leave,
+              &.ng-enter.ng-enter-active
+              {
+                opacity: 1;
+                left: 0;
+              }
+            }
+          }
+        }
+
+        .messages
+        {
+
+          //        position: absolute;
+          //        bottom: 0;
+          //        left: 0;
+          //        right: 0;
+
+          display: flex;
+          flex-direction: column-reverse;
+
+          padding-bottom: 15px;
+
+          .message
+          {
+            position: relative;
+            min-height: 35px;
+
+            padding-top: 5px;
+
+            .message-body
+            {
+
+              max-width: $messages-width - 70px;
+              word-wrap: break-word;
+            }
+
+            &:not(.right-side)
+            {
+              .avatar
+              {
+                position: absolute;
+                left: 9px;
+                top: 5.5px;
+
+                img
+                {
+                  height: 26px;
+                  width: 26px;
+                  border-radius: 13px;
+                }
+              }
+
+              .message-body
+              {
+                //              position: relative;
+                display: inline-block;
+                //              left: 40px;
+                //              bottom: 3px;
+
+                //              display: block;
+                margin-left: 40px;
+                margin-bottom: 1px;
+
+                //              min-width: 50px;
+
+                font-size: 15px;
+
+                border: 1px solid rgba(0, 0, 0, 0.1);
+
+                padding: 2px 5px 2px 5px;
+                //              background-color: #f9f9f9;
+              }
+            }
+
+            &.right-side
+            {
+              .avatar
+              {
+                position: absolute;
+                right: 9px;
+                top: 5.5px;
+
+                img
+                {
+                  height: 26px;
+                  width: 26px;
+                  border-radius: 13px;
+                }
+              }
+
+              .message-body
+              {
+                position: relative;
+                //            left: none;
+                //              right: 40px !important;
+                //              bottom: 3px;
+                float: right;
+                margin-right: 40px;
+                margin-bottom: 4px;
+
+                font-size: 15px;
+
+                border: 1px solid rgba(0, 0, 0, 0.1);
+
+                padding: 2px 5px 2px 5px;
+                background-color: #f9f9f9;
+              }
+            }
+          }
+
+          .load-more
+          {
+            margin-bottom: 20px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+
+            transition: opacity 0.3s ease;
+
+            &:hover
+            {
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+
+      .message-input
+      {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        //      height: 50px;
+
+        background-color: #ffffff;
+
+        input
+        {
+          border-radius: 0;
+        }
+      }
+    }
+
+    #main-window
+    {
+      position: absolute;
+      //    width: 250px;
+      top: $navbar-height;
+      bottom: 0px;
+      right: 0px;
+      left: 250px;
+      background-color: #e6e6e6;
+
+      z-index: 1;
+
+      padding-top: 30px;
+      overflow: auto;
+
+      #feed
+      {
+        position: absolute;
+
+        transition: left 0.5s ease;
+
+        left: 0;
+        right: 0;
+        //      top: 0;
+        //      bottom: 0;
+
+        &.ng-hide-add
+        {
+          opacity: 0;
+        }
+
+        .post
+        {
+          width: 500px;
+        }
+
+        .status-form
+        {
+          width: 545px;
+        }
+
+        &.half-width
+        {
+          left: $messages-width;
+
+          .post
+          {
+            width: 470px;
+          }
+
+          .status-form
+          {
+            width: 500px;
+          }
+        }
+
+        .post,
+        .status-form
+        {
+          transition: all 0.5s ease;
+        }
+
+        .post
+        {
+          position: relative;
+
+          margin: 0 auto;
+
+          background-color: #f3f3f3;
+
+          $post-padding: 10px;
+
+          padding-top: $post-padding + 50px;
+          padding-bottom: $post-padding;
+
+          border-radius: 3px;
+
+          box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+
+          margin-bottom: 20px;
+
+          //        opacity: 0;
+          //        transition: 0.5s all ease;
+
+          &.ng-enter,
+          &.ng-leave
+          {
+            transition: 0.5s all ease;
+          }
+
+          &.ng-enter,
+          &.ng-leave.ng-leave-active
+          {
+            opacity: 0;
+            left: -50px;
+          }
+
+          &.ng-leave,
+          &.ng-enter.ng-enter-active
+          {
+            opacity: 1;
+            left: 0;
+          }
+
+          .avatar
+          {
+            position: absolute;
+            left: $post-padding;
+            top: $post-padding;
+
+            img
+            {
+              width: 40px;
+              height: 40px;
+
+              border-radius: 3px;
+            }
+          }
+
+          .name
+          {
+            position: absolute;
+            left: $post-padding + 45px;
+            top: $post-padding;
+          }
+
+          .time
+          {
+            position: absolute;
+            left: $post-padding + 45px;
+            top: $post-padding + 17px;
+
+            opacity: 0.7;
+          }
+
+          .status-body
+          {
+            margin-left: $post-padding;
+            margin-right: $post-padding;
+
+            white-space: pre-line;
+          }
+        }
+
+        .status-form
+        {
+          //        position: relative;
+          margin-left: auto;
+          margin-right: auto;
+
+          //        margin: 0 auto;
+
+          //        width: 55%;
+          background-color: #f3f3f3;
+
+          $form-padding: 0px;
+
+          padding-top: $form-padding;
+          padding-bottom: $form-padding;
+
+          border-radius: 3px;
+
+          box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+
+          margin-bottom: 20px;
+
+          overflow: hidden;
+
+          #status-field
+          {
+            background-color: rgba(0, 0, 0, 0);
+            border: none;
+            box-shadow: none;
+            resize: none;
+          }
+
+          #status-submit
+          {
+            float: right;
+
+            //          width: 50px;
+            //          height: 35px;
+
+            $padding: 4px;
+            padding-left: $padding + 5px;
+            padding-right: $padding + 5px;
+            padding-top: $padding;
+            padding-bottom: $padding;
+
+            margin-right: 5px;
+            margin-bottom: 5px;
+
+            transition: opacity 0.5s ease;
+
+            &[disabled]
+            {
+              opacity: 0;
+            }
+          }
+        }
+        .load-more
+        {
+          text-align: center;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          cursor: pointer;
+
+          transition: opacity 0.5s ease;
+
+          &:hover
+          {
+            opacity: 0.65;
+          }
+        }
+      }
+
+      #settings
+      {
+        position: absolute;
+
+        transition: left 0.5s ease;
+
+        left: 0;
+        right: 0;
+
+        &.ng-hide-add
+        {
+          opacity: 0;
+        }
+
+        &.half-width
+        {
+          left: $messages-width;
+
+          .post
+          {
+            width: 470px;
+          }
+
+          .status-form
+          {
+            width: 500px;
+          }
+        }
+
+        .settings-section
+        {
+          width: 500px;
+          min-height: 50px;
+
+          background-color: #f3f3f3;
+          border-radius: 3px;
+          box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+
+          position: relative;
+          margin: 0 auto;
+
+          padding: 10px 10px 10px 10px;
+
+          .section-name
+          {
+            font-size: 20px;
+            opacity: 0.7;
+
+            margin-bottom: 10px;
+          }
+
+          &.gravatar-settings
+          {
+            height: 175px;
+
+            img
+            {
+              display: block;
+//              float: left;
+            }
+
+            .image-caption
+            {
+              display: inline-block;
+              float: left;
+              width: 100px;
+              text-align: center;
+              opacity: 0.75;
+            }
+
+            .gravatar-link
+            {
+              position: absolute;
+              right: 0;
+              bottom: 27px;
+              height: 100px;
+              left: 110px;
+
+              text-align: center;
+              line-height: 100px;
+              vertical-align: middle;
+
+              font-size: 25px;
+
+              a
+              {
+                transition: all 0.5s ease;
+
+                text-decoration: none;
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
 }

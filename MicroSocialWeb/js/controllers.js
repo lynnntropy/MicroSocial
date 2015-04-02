@@ -1,4 +1,4 @@
-var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives']);
+var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives', 'infinite-scroll']);
 
 microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({
@@ -24,8 +24,8 @@ microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvi
 angular.module('ui.gravatar').config([
     'gravatarServiceProvider', function(gravatarServiceProvider) {
         gravatarServiceProvider.defaults = {
-            size     : 100,
-            "default": 'retro'  // Mystery man as default for missing avatars
+            size: 100,
+            "default": 'retro'  // default for missing avatars
         };
     }
 ]);
@@ -39,6 +39,11 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
 {
     $rootScope.baseUrl = $location.absUrl();
     $rootScope.baseUrl = $rootScope.baseUrl.substring(0, $rootScope.baseUrl.length - 1);
+
+    $scope.$on('logoutSuccessful', function (event)
+    {
+        $scope.stopSpin();
+    });
 
     $scope.startSpin = function()
     {
@@ -66,6 +71,8 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
         .success(function (data, status, headers, config)
         {
             $log.info(data);
+            $scope.user.username = $.cookie('username');
+
             $scope.successfulLogin($.cookie('session'));
             // instant login.. unsure if a good idea
 //            $rootScope.validCookie = true;
@@ -201,6 +208,7 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
 
 //        $cookies.session_id = session;
         $.cookie('session', session, { path: '/', expires: 365 });
+        $.cookie('username', $scope.user.username, { path: '/', expires: 365 });
 
         $('#login').addClass("loginEnded");
 
@@ -216,6 +224,11 @@ microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '
 microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
 {
     $scope.users = [];
+
+    $scope.$on('logoutSuccessful', function (event)
+    {
+        $scope.users = [];
+    });
 
     $scope.$on('loginCompleted', function (event)
     {
@@ -241,8 +254,9 @@ microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http'
         });
     };
 
-    $scope.openMessages = function(username)
+    $scope.openMessages = function(username, fullName)
     {
+        $rootScope.messagesOtherUserName = fullName;
         $rootScope.$broadcast('openMessages', { username: username });
     }
 }]);
@@ -251,6 +265,11 @@ microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$
 {
     $scope.posts = [];
     $scope.fullWidth = true;
+
+    $scope.$on('logoutSuccessful', function (event)
+    {
+        $scope.posts = [];
+    });
 
     $scope.$on('loginCompleted', function (event)
     {
@@ -287,6 +306,12 @@ microSocialApp.controller('FeedController', ['$scope', '$rootScope', '$http', '$
             $log.info(data);
         });
     };
+
+    $scope.loadMore = function ()
+    {
+        $log.info('Loading more posts..');
+        $scope.getFeed($scope.posts.length, $scope.posts.length + 20);
+    }
 }]);
 
 microSocialApp.controller('StatusFormController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
@@ -329,6 +354,11 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     $scope.messages = [];
     $scope.messageToSend = "";
 
+    $scope.$on('logoutSuccessful', function (event)
+    {
+        $scope.messages = [];
+    });
+
     $scope.$on('openMessages', function(event, args)
     {
         $scope.openMessages(args.username);
@@ -338,9 +368,15 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     {
         if ($rootScope.messagesOpen === false)
         {
-            $scope.username = username;
             $rootScope.messagesOpen = true;
-            $scope.getMessages(0, 50, true);
+
+            setTimeout(function ()
+            {
+                $scope.username = username;
+                $scope.getMessages(0, 50, true);
+
+            }, 600);
+
         }
         else
         {
@@ -351,6 +387,11 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
     $scope.closeMessages = function()
     {
         $rootScope.messagesOpen = false;
+        setTimeout(function ()
+        {
+            $scope.messages = [];
+        }, 600);
+
     };
 
     $scope.getMessages = function (first, last, clear, addToBack)
@@ -399,7 +440,7 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
             $log.info(data);
         });
     };
-    
+
     $scope.submitMessage = function ()
     {
         if ($scope.messageToSend.trim().length > 0)
@@ -500,7 +541,7 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
 
         $scope.openSocket();
     });
-    
+
     $scope.loadMore = function ()
     {
         $scope.getMessages($scope.messages.length, $scope.messages.length + 50, false, true);
@@ -510,7 +551,8 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
 
 microSocialApp.controller('NavbarController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
 {
-//    var userProfile = {};
+    $scope.logoutHovered = false;
+    $scope.settingsHovered = false;
 
     $scope.$on('loginCompleted', function (event)
     {
@@ -525,19 +567,66 @@ microSocialApp.controller('NavbarController', ['$scope', '$rootScope', '$http', 
         .success(function (data, status, headers, config)
         {
             $log.info(data);
-            $scope.userProfile = data;
+            $rootScope.userProfile = data;
 
         }).error(function (data, status, headers, config)
         {
             $log.info(data);
         });
     });
+
+    $scope.logoutHover = function ()
+    {
+        $scope.logoutHovered = true;
+    };
+
+    $scope.logoutLeave = function ()
+    {
+        $scope.logoutHovered = false;
+    };
+
+    $scope.settingsHover = function ()
+    {
+        $scope.settingsHovered = true;
+    };
+
+    $scope.settingsLeave = function ()
+    {
+        $scope.settingsHovered = false;
+    };
+
+    $scope.logoutClick = function ()
+    {
+        $http({
+            method: "DELETE",
+            url: $rootScope.baseUrl + ":9000" + "/session",
+            data:
+            {
+                "username": $rootScope.username,
+                "session_id": $rootScope.session
+            }
+        })
+        .success(function (data, status, headers, config)
+        {
+            $log.info(data);
+
+            setTimeout(function ()
+            {
+                $('#login').css("display", "block");
+            }, 0);
+
+            $('#login').removeClass("loginEnded");
+
+            $rootScope.$broadcast('logoutSuccessful');
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.info(data);
+        });
+    };
+
+    $scope.settingsClick = function ()
+    {
+        $rootScope.settingsOpened = !$rootScope.settingsOpened;
+    }
 }]);
-
-function nl2br(str, is_xhtml)
-{
-    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br ' + '/>' : '<br>';
-
-    return (str + '')
-        .replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
-}
