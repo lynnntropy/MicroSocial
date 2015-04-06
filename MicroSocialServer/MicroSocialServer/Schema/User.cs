@@ -12,6 +12,9 @@ namespace MicroSocialServer.Schema
     {
         public string username;
 
+        public string fullName;
+        public string email;
+
         [JsonIgnore]
         public string passwordHash;
 

@@ -21,3 +21,5 @@ C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.dll
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.pdb
 C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\BCrypt.Net.xml
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\websocket-sharp.dll
+C:\Users\Veselin\Development\MicroSocial\MicroSocialServer\MicroSocialServer\bin\Debug\websocket-sharp.xml

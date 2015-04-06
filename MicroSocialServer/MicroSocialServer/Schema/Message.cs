@@ -12,6 +12,9 @@ namespace MicroSocialServer.Schema
         public DateTime time;
         public string senderName;
         public string recipientName;
+        public string senderEmail;
+
+        public string displayName;
 
         public Message(string messageBody, DateTime time, string senderName, string recipientName)
         {

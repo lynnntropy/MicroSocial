@@ -5,7 +5,9 @@
                 android:layout_height="match_parent"
 
                 xmlns:fbutton="http://schemas.android.com/apk/res-auto"
-                xmlns:wheel="http://schemas.android.com/apk/res-auto">
+                xmlns:wheel="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:materialdesign="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
                                        xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,25 +24,13 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="65dp"
+        android:layout_height="fill_parent"
         android:layout_below="@+id/main_toolbar"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:background="@color/primary_blue"
         android:id="@+id/relativeLayout2"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:paddingRight="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Current hotspot"
-            android:textColor="@color/text_color_white"
-            android:id="@+id/currentHotspotLabel"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+        android:padding="15dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -49,9 +39,20 @@
             android:textColor="@color/text_color_white"
             android:id="@+id/currentHotspotName"
             android:textSize="20dp"
-            android:layout_below="@+id/currentHotspotLabel"
+            android:layout_above="@+id/currentHotspotLabel"
+            android:layout_alignLeft="@+id/currentHotspotLabel"
+            android:layout_alignStart="@+id/currentHotspotLabel"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current hotspot"
+            android:textColor="@color/text_color_white"
+            android:id="@+id/currentHotspotLabel"
+            android:layout_alignBottom="@+id/changeHotspot"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
+
 
         <info.hoang8f.widget.FButton
             android:id="@+id/changeHotspot"
@@ -60,40 +61,16 @@
 
             fbutton:buttonColor="@color/text_color_white"
             android:text="Change hotspot"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="5dp"/>
+            android:layout_alignParentEnd="true"/>
+
+
+
+
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@color/primary_blue"
-        android:id="@+id/relativeLayout">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Network"
-            android:id="@+id/fullName"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:textSize="20dp"
-            android:textColor="#ffeaeff8"/>
-    </RelativeLayout>
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/networkList"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/relativeLayout2"/>
 
     <com.pnikosis.materialishprogress.ProgressWheel
         android:id="@+id/spinner"
@@ -101,35 +78,87 @@
         android:layout_height="110dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        wheel:barColor="#5588FF"
-        wheel:progressIndeterminate="true" />
+        wheel:barColor="#FFFFFF"
+        wheel:progressIndeterminate="true" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scanning host 5 of 254"
-        android:id="@+id/hostNumber"
-        android:layout_below="@+id/spinner"
-        android:layout_centerHorizontal="true"/>
+    </com.pnikosis.materialishprogress.ProgressWheel>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_baseColor="#FFFFFF"
+        app:met_primaryColor="#FFFFFF"
+        app:met_floatingLabel="highlight"
+        android:hint="Server Location (IP)"
+        android:visibility="invisible"
+
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:text="Networks found: 0"
-        android:id="@+id/networksFound"
-        android:layout_below="@+id/hostNumber"
+        android:id="@+id/serverIp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginTop="150dp"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_baseColor="#FFFFFF"
+        app:met_primaryColor="#FFFFFF"
+        app:met_floatingLabel="highlight"
+        android:hint="Username"
+        android:visibility="invisible"
+
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/username"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="210dp"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_baseColor="#FFFFFF"
+        app:met_primaryColor="#FFFFFF"
+        app:met_floatingLabel="highlight"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:visibility="invisible"
+
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/password"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="270dp"/>
+
+    <!--<com.gc.materialdesign.views.ButtonRectangle-->
+        <!--android:id="@+id/connectButton"-->
+        <!--android:layout_width="130dp"-->
+        <!--android:layout_height="60dp"-->
+        <!--android:background="#EEEEEE"-->
+        <!--android:text="Connect"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_below="@id/password"-->
+        <!--android:layout_marginTop="15dp"/>-->
 
     <info.hoang8f.widget.FButton
-        android:id="@+id/stopScanning"
-        android:layout_width="140dp"
-        android:layout_height="35dp"
+        android:id="@+id/connectButton"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
 
-        fbutton:buttonColor="@color/primary_blue"
-        android:text="Stop scanning"
-        android:layout_below="@+id/networksFound"
-        android:layout_centerHorizontal="true"/>
+        fbutton:buttonColor="@color/text_color_white"
+        android:text="Connect"
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="350dp"/>
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/newUserButton"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+
+        fbutton:buttonColor="@color/text_color_white"
+        android:text="New user?"
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="400dp"/>
 
 
 </RelativeLayout>

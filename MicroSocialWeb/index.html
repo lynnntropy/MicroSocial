@@ -2,35 +2,152 @@
 <html ng-app="microSocial">
 
 <head lang="en">
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>MicroSocial</title>
 
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
     <!--<link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.min.css">-->
     <link rel="stylesheet" href="css/app.css">
 
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <!--<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>-->
+    <script src="bower_components/jquery-cookie/jquery.cookie.js"></script>
+    <script src="bower_components/spin.js/spin.js"></script>
+    <script src="bower_components/angular-spinner/angular-spinner.js"></script>
+    <script src="bower_components/angular-gravatar/build/md5.min.js"></script>
+    <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
+    <script src="bower_components/angular-scroll-glue/src/scrollglue.js"></script>
+    <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+
+    <script src="js/jquery.timeago.js"></script>
     <script src="js/controllers.js"></script>
 </head>
 
 <body>
-    <div id="login" ng-controller="LoginController as login">
+    <div id="login" ng-controller="LoginController">
+        <span id="login-spinner" us-spinner spinner-key="login" ng-class="{ showspinner: showSpinner }"></span>
         <div id="login-form">
-            <img class="logo" src="img/MicroSocialLogo.png">
+            <form name="loginForm">
+                <img class="logo" src="img/MicroSocialLogo.png">
 
-            <div id="register-form" class="cssSlideUp" ng-show="registerForm">
-                <input class="form-control" ng-model="user.fullName" type="text" id="full-name" placeholder="Full Name">
-                <input class="form-control" ng-model="user.email" type="email" id="email" placeholder="Email">
+                <div class="alert alert-danger" role="alert" ng-show="showError">{{ errorMessage }}</div>
+
+                <div id="register-form" class="cssSlideUp" ng-show="registerForm">
+                    <input class="form-control" ng-model="user.fullName" type="text" id="full-name" placeholder="Full Name" minlength="1">
+                    <input class="form-control" ng-model="user.email" type="email" id="email" placeholder="Email" minlength="1">
+                </div>
+
+                <input class="form-control" ng-model="user.username" type="text" id="username" placeholder="Username" minlength="1">
+                <input class="form-control" ng-model="user.password" type="password" id="password" placeholder="Password" minlength="1">
+
+                <input class="btn btn-success" type="submit" id="submit-login" value="{{ registerForm ? 'Register' : 'Login' }}" ng-click="submitForm()" ng-disabled="loginForm.$invalid || loginForm.$pristine">
+
+                <div class="register" ng-click="showRegister()">
+                    {{ registerForm ? '» Login «' : '» Create an account «' }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="navbar" ng-controller="NavbarController">
+            <div class="logo">
+                <img src="img/MicroSocialLogo.png">
+            </div>
+            <div class="user-profile" ng-class="{'show-logout': logoutHovered || settingsHovered}">
+                <div class="avatar">
+                    <img gravatar-src="'{{userProfile.email}}'" gravatar-size="100">
+                </div>
+                <div class="name">
+                    {{userProfile.fullName}}
+                </div>
+                <div class="email">
+                    {{userProfile.email}}
+                </div>
+            </div>
+            <div class="logout-label" ng-class="{'show-logout': logoutHovered}">
+                Log out?
+            </div>
+            <div class="settings-label" ng-class="{'show-settings': settingsHovered}">
+                Preferences
+            </div>
+            <div class="logout">
+                <i class="fa fa-power-off" ng-mouseover="logoutHover()" ng-mouseleave="logoutLeave()" ng-click="logoutClick()"></i>
+            </div>
+            <div class="settings">
+                <i class="fa fa-cog" ng-mouseover="settingsHover()" ng-mouseleave="settingsLeave()" ng-click="settingsClick()"></i>
+            </div>
+        </div>
+
+        <div id="user-list" ng-controller="UserListController">
+            <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username, user.fullName)">
+                <div class="avatar"><img gravatar-src="'{{user.email}}'"/></div>
+                <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>
+                <div class="email">{{user.email}}</div>
+            </div>
+        </div>
+
+        <div id="messages-pane" ng-controller="MessagesController" ng-class="{'slide-out': !messagesOpen}">
+            <div class="header">
+                <div class="name">{{messagesOtherUserName}}</div>
+                <i class="fa fa-angle-left close-button" aria-hidden="true" ng-click="closeMessages()"></i>
             </div>
 
-            <input class="form-control" ng-model="user.username" type="text" id="username" placeholder="Username">
-            <input class="form-control" ng-model="user.password" type="password" id="password" placeholder="Password">
+            <div class="messages-container" scroll-glue>
+                <div class="messages">
+                    <div class="message" ng-repeat="message in messages" ng-class="{'right-side': username != message.senderName}">
+                        <div class="avatar" ng-hide="message.appendMessage"><img gravatar-src="'{{message.senderEmail}}'" gravatar-size="45"/></div>
+                        <div class="message-body">{{message.messageBody}}</div>
+                    </div>
+                    <div class="load-more" ng-show="messages.length > 0" ng-click="loadMore()">
+                        Load more messages..
+                    </div>
+                </div>
+            </div>
 
-            <input class="btn btn-success" type="submit" id="submit-login" value="{{ registerForm ? 'Register' : 'Login' }}" ng-click="submitForm()">
+            <div class="message-input">
+                <form ng-submit="submitMessage()">
+                    <input id="message-input-box" type="text" ng-model="messageToSend" class="form-control" placeholder="Message...">
+                </form>
+            </div>
+        </div>
 
-            <div class="register" ng-click="showRegister()">
-                {{ registerForm ? '» Login «' : '» Create an account «' }}
+        <div id="main-window" ng-controller="FeedController">
+            <div id="feed" ng-class="{'half-width': messagesOpen}" ng-show="!settingsOpened">
+                <div class="status-form" ng-controller="StatusFormController">
+                    <form name="statusForm">
+                        <textarea placeholder="Write a post.." ng-model="status.body" class="form-control" rows="2" id="status-field"></textarea>
+                        <button id="status-submit" ng-click="submitStatus()" ng-disabled="statusForm.$pristine" type="submit" class="btn btn-small btn-default">Submit</button>
+                    </form>
+                </div>
+
+                <div class="post" ng-repeat="post in posts | orderBy:'-time'">
+                    <div class="avatar"><img gravatar-src="'{{post.poster.email}}'"/></div>
+                    <div class="name">{{post.poster.fullName}}</div>
+                    <div class="time"><time class="timeago" datetime="{{post.time + '+00:00'}}"></time></div>
+                    <div class="status-body">{{post.statusContent}}</div>
+                </div>
+
+                <div class="load-more" ng-click="loadMore()">
+                    Load more posts..
+                </div>
+            </div>
+            <div id="settings" ng-class="{'half-width': messagesOpen}" ng-show="settingsOpened">
+                <div class="settings-section gravatar-settings">
+                    <div class="section-name">Gravatar Settings</div>
+                    <img gravatar-src="'{{userProfile.email}}'">
+                    <div class="image-caption">
+                        Current avatar
+                    </div>
+                    <div class="gravatar-link">
+                        <a href="http://en.gravatar.com/"> Go to Gravatar </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

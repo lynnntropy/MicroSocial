@@ -31,7 +31,9 @@
         android:layout_above="@+id/messageTextField"
 
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"/>
+        android:transcriptMode="alwaysScroll"
+
+        android:divider="@null"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
