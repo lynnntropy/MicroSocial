@@ -13,15 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.omegavesko.microsocial.android.alpha.AuthTokenManager;
-import me.omegavesko.microsocial.android.alpha.ChatMessage;
 import me.omegavesko.microsocial.android.alpha.R;
+import me.omegavesko.microsocial.android.alpha.schema.Message;
 
-/**
- * Created by Veselin on 1/13/2015.
- */
-public class MessageListAdapter extends ArrayAdapter<ChatMessage>
+public class MessageListAdapter extends ArrayAdapter<Message>
 {
-    public MessageListAdapter(Context context, List<ChatMessage> objects)
+    public MessageListAdapter(Context context, List<Message> objects)
     {
         super(context, 0, objects);
     }
@@ -30,18 +27,18 @@ public class MessageListAdapter extends ArrayAdapter<ChatMessage>
     public View getView(int position, View convertView, ViewGroup parent)
     {
         final String userName = new AuthTokenManager(getContext()).getClientToken().username;
-        final ChatMessage chatMessage = getItem(position);
+        final Message chatMessage = getItem(this.getCount() - 1 - position); // reverse list order
 
         // don't reuse views because it causes issues with right/left alignment
         convertView =
                 LayoutInflater.from(getContext()).inflate(
-                        chatMessage.sender.equals(userName) ? R.layout.message_right : R.layout.message_left, parent, false);
+                        chatMessage.senderName.equals(userName) ? R.layout.message_right : R.layout.message_left, parent, false);
 
         TextView usernameLabel = (TextView) convertView.findViewById(R.id.username);
         TextView messageText = (TextView) convertView.findViewById(R.id.messageText);
 
-        usernameLabel.setText(chatMessage.sender);
-        messageText.setText(chatMessage.messageText);
+        usernameLabel.setText(chatMessage.senderName);
+        messageText.setText(chatMessage.messageBody);
 
         return convertView;
     }

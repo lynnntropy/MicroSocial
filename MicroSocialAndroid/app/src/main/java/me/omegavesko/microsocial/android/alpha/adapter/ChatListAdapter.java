@@ -16,15 +16,16 @@ import me.omegavesko.microsocial.android.alpha.AuthTokenManager;
 import me.omegavesko.microsocial.android.alpha.ChatMessage;
 import me.omegavesko.microsocial.android.alpha.R;
 import me.omegavesko.microsocial.android.alpha.activity.MessageActivity;
+import me.omegavesko.microsocial.android.alpha.schema.Message;
 
-public class ChatListAdapter extends ArrayAdapter<ChatMessage>
+public class ChatListAdapter extends ArrayAdapter<Message>
 {
     private boolean dummyData;
     private Context context;
 
-    private List<ChatMessage> data;
+    private List<Message> data;
 
-    public ChatListAdapter(Context context, List<ChatMessage> objects, boolean dummyData)
+    public ChatListAdapter(Context context, List<Message> objects, boolean dummyData)
     {
         super(context, R.layout.list_item_user, objects);
         this.dummyData = dummyData;
@@ -38,12 +39,12 @@ public class ChatListAdapter extends ArrayAdapter<ChatMessage>
         {
             // full a list with dummy users
 
-            List<ChatMessage> dummyMessages = new ArrayList<ChatMessage>();
-
-            for (int i = 1; i <= 50; i++)
-                dummyMessages.add(new ChatMessage("Sender " + i, "Recipient", "Hello!", ChatMessage.MessageType.TEXT_MESSAGE));
-
-            this.data = dummyMessages;
+//            List<Message> dummyMessages = new ArrayList<Message>();
+//
+//            for (int i = 1; i <= 50; i++)
+//                dummyMessages.add(new ChatMessage("Sender " + i, "Recipient", "Hello!", ChatMessage.MessageType.TEXT_MESSAGE));
+//
+//            this.data = dummyMessages;
         }
     }
 
@@ -64,7 +65,7 @@ public class ChatListAdapter extends ArrayAdapter<ChatMessage>
     public View getView(int position, View convertView, ViewGroup parent)
     {
 //        return super.getView(position, convertView, parent);
-        final String userName = new AuthTokenManager(getContext()).getClientToken().username;
+        final String userName = this.context.getSharedPreferences("lastNetwork", 0).getString("username", "none");
 
         View view = convertView;
 
@@ -80,49 +81,56 @@ public class ChatListAdapter extends ArrayAdapter<ChatMessage>
 
         // populate the elements of the view normally
         // ...
-        final ChatMessage chatMessage = this.data.get(position);
+        final Message message = this.data.get(position);
 
         TextView senderName = (TextView) view.findViewById(R.id.senderName);
         TextView messageText = (TextView) view.findViewById(R.id.messageText);
 
-        if (chatMessage.recepientUserName.equals("all"))
+        if (message.recipientName.equals("all"))
         {
             // set name to "Everyone" and make it bold if it's the all channel
             senderName.setText("Everyone");
             senderName.setTypeface(null, Typeface.BOLD);
         }
-        else if (chatMessage.recepientUserName.equals(new AuthTokenManager(context).getClientToken().username))
-        {
-            // set name to the sender if the message was sent to us
-            senderName.setText(chatMessage.sender);
-        }
+//        else if (message.recipientName.equals(userName))
+//        {
+//            // set name to the sender if the message was sent to us
+//            senderName.setText(message.senderName);
+//        }
+//        else
+//        {
+//            // otherwise, just set it to the recipient
+//            senderName.setText(message.recipientName);
+//        }
         else
         {
-            // otherwise, just set it to the recipient
-            senderName.setText(chatMessage.recepientUserName);
+            senderName.setText(message.displayName);
         }
 
-        messageText.setText(chatMessage.messageText);
+        messageText.setText('"' + message.messageBody + '"');
 
         view.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                openMessageActivity(chatMessage.sender.equals(userName) ? chatMessage.recepientUserName : chatMessage.sender);
+                openMessageActivity(
+                        message.senderName.equals(userName) ? message.recipientName : message.senderName,
+                        message.displayName);
             }
         });
 
         return view;
     }
 
-    void openMessageActivity(String username)
+    void openMessageActivity(String username, String fullname)
     {
         Intent intent = new Intent(getContext(), MessageActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Pack the user's information into the intent so we have something to show
         intent.putExtra("USERNAME", username);
+        intent.putExtra("FULLNAME", fullname);
 
         // start the activity
         getContext().startActivity(intent);

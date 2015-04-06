@@ -18,17 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.omegavesko.microsocial.android.alpha.R;
-import me.omegavesko.microsocial.android.alpha.RegisteredUser;
 import me.omegavesko.microsocial.android.alpha.activity.UserActivity;
+import me.omegavesko.microsocial.android.alpha.schema.User;
 
-public class UserListAdapter extends ArrayAdapter<RegisteredUser>
+public class UserListAdapter extends ArrayAdapter<User>
 {
     private boolean dummyData;
     private Context context;
 
-    private List<RegisteredUser> data;
+    private List<User> data;
 
-    public UserListAdapter(Context context, List<RegisteredUser> objects, boolean dummyData)
+    public UserListAdapter(Context context, List<User> objects, boolean dummyData)
     {
         super(context, R.layout.list_item_user, objects);
         this.dummyData = dummyData;
@@ -38,17 +38,17 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
         {
             this.data = objects;
         }
-        else
-        {
-            // full a list with dummy users
-
-            List<RegisteredUser> dummyUsers = new ArrayList<RegisteredUser>();
-
-            for (int i = 1; i <= 5; i++)
-                dummyUsers.add(new RegisteredUser("none", "username", "John Doe " + i, null));
-
-            this.data = dummyUsers;
-        }
+//        else
+//        {
+//            // full a list with dummy users
+//
+////            List<User> dummyUsers = new ArrayList<User>();
+////
+////            for (int i = 1; i <= 5; i++)
+////                dummyUsers.add(new RegisteredUser("none", "username", "John Doe " + i, null));
+////
+////            this.data = dummyUsers;
+//        }
     }
 
     @Override
@@ -60,7 +60,7 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
         }
         else
         {
-            return super.getCount();
+            return data.size();
         }
     }
 
@@ -84,7 +84,7 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
         // populate the elements of the view normally
         // ...
         TextView userNameView = (TextView) view.findViewById(R.id.userName);
-        userNameView.setText(data.get(position).userRealName);
+        userNameView.setText(data.get(position).fullName);
 
         view.setOnClickListener(new View.OnClickListener()
         {
@@ -122,9 +122,9 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
         return id;
     }
 
-    private void openContactPage(RegisteredUser user)
+    private void openContactPage(User user)
     {
-        if (user.userPhoneNumber != null && !user.userPhoneNumber.trim().equals("none") && !user.userPhoneNumber.trim().equals(""))
+        if (user.phoneNumber != null && !user.phoneNumber.trim().equals("none") && !user.phoneNumber.trim().equals(""))
         {
             // attempt to open the native contact for this phone number
 
@@ -134,7 +134,7 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
 //            openContactIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            context.startActivity(openContactIntent);
 
-            String id = getContactIdByNumber(user.userPhoneNumber);
+            String id = getContactIdByNumber(user.phoneNumber);
             Intent contactIntent = new Intent(Intent.ACTION_VIEW);
             Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, String.valueOf(id));
             contactIntent.setData(uri);
@@ -158,15 +158,15 @@ public class UserListAdapter extends ArrayAdapter<RegisteredUser>
         }
     }
 
-    private void openCustomUserActivity(RegisteredUser user)
+    private void openCustomUserActivity(User user)
     {
         Intent intent = new Intent(context, UserActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         // Pack the user's information into the intent so we have something to show
-        intent.putExtra("USERNAME", user.userName);
-        intent.putExtra("FULLNAME", user.userRealName);
-        intent.putExtra("PHONE", user.userPhoneNumber);
+        intent.putExtra("USERNAME", user.username);
+        intent.putExtra("FULLNAME", user.fullName);
+        intent.putExtra("PHONE", user.phoneNumber);
 
         context.startActivity(intent);
     }

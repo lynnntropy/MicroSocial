@@ -47,7 +47,11 @@ namespace MicroSocialServer.Resources
 
                     if (session.user1 == message.recipientName)
                     {
-                        session.ReceiveMessage(message.messageBody);
+                        if (session.user2 == message.senderName)
+                        {
+                            session.ReceiveMessage(message.messageBody);
+                            break;
+                        }
                     }
                 }
 
@@ -114,11 +118,11 @@ namespace MicroSocialServer.Resources
                     //this.SendJsonResponse(context, json);
                 }
                 else
-            {
-                dbManager.Close();
-                context.Response.StatusCode = 401;
-                this.SendTextResponse(context, "Nope.");
-            }
+                {
+                    dbManager.Close();
+                    context.Response.StatusCode = 401;
+                    this.SendTextResponse(context, "Nope.");
+                }
             }
             else
             {
@@ -126,7 +130,56 @@ namespace MicroSocialServer.Resources
                 this.SendTextResponse(context,
                     "Grapevine dun goofed if you got this far..");
             }
-            
+        }
+
+        [RESTRoute(Method = HttpMethod.GET, PathInfo = @"^/newestMessages\?session=\S+&first=\d+&last=\d+$")]
+        public void GetNewestMessages(HttpListenerContext context)
+        {
+            context.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
+            context.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+            var dbManager = new DatabaseManager();
+            dbManager.Connect();
+
+            var regex =
+                @"^/newestMessages\?session=(?<session>\S+)&first=(?<first>\d+)&last=(?<last>\d+)$";
+
+            Match match = Regex.Match(context.Request.RawUrl, regex);
+            if (match.Success)
+            {
+                var session = int.Parse(match.Groups["session"].Value);
+
+                if (dbManager.CheckSession(session))
+                {
+                    var requestingUser = dbManager.GetUserFromSession(session).username;
+                    int first = int.Parse(match.Groups["first"].Value);
+                    int last = int.Parse(match.Groups["last"].Value);
+
+                    var messages = dbManager.GetLatestMessages(requestingUser, first, last);
+
+                    var json = new JObject();
+                    json["user"] = JToken.FromObject(requestingUser);
+                    json["first"] = JToken.FromObject(first);
+                    json["last"] = JToken.FromObject(last);
+                    json["messages"] = JToken.FromObject(messages);
+
+                    dbManager.Close();
+                    this.SendTextResponse(context, json.ToString(), Encoding.UTF8);
+                }
+                else
+                {
+                    dbManager.Close();
+                    context.Response.StatusCode = 401;
+                    this.SendTextResponse(context, "Nope.");
+                }
+            }
+            else
+            {
+                dbManager.Close();
+                this.SendTextResponse(context,
+                    "Newest messages: Grapevine dun goofed if you got this far..");
+            }
         }
     }
 }

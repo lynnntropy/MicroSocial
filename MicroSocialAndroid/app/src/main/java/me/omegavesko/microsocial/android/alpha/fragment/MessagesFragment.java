@@ -20,52 +20,53 @@ import me.omegavesko.microsocial.android.alpha.ObjectSocket;
 import me.omegavesko.microsocial.android.alpha.R;
 import me.omegavesko.microsocial.android.alpha.RequestCode;
 import me.omegavesko.microsocial.android.alpha.ServerConnector;
+import me.omegavesko.microsocial.android.alpha.network.RESTManager;
+import me.omegavesko.microsocial.android.alpha.schema.Message;
 
 public class MessagesFragment extends Fragment
 {
-    private class GetNewestMessagesTask extends AsyncTask<Void, Void, List<ChatMessage>>
+    private class GetNewestMessagesTask extends AsyncTask<Void, Void, List<Message>>
     {
-        @Override
-        protected List<ChatMessage> doInBackground(Void... params)
+        int first, last;
+
+        private GetNewestMessagesTask(int first, int last)
         {
-            List<ChatMessage> messages = new ArrayList<ChatMessage>();
+            this.first = first;
+            this.last = last;
+        }
+
+        @Override
+        protected List<Message> doInBackground(Void... params)
+        {
+            List<Message> messages = new ArrayList<Message>();
 
             try
             {
-                SharedPreferences settings = getActivity().getSharedPreferences("currentNetworkInfo", 0);
-                String serverLocation = settings.getString("networkLocation", "none");
+                SharedPreferences storedNetworkSettings = getActivity().getSharedPreferences("lastNetwork", 0);
+                String username = storedNetworkSettings.getString("username", "none");
+                String session = new Integer(storedNetworkSettings.getInt("session", 0)).toString();
 
-                ObjectSocket objectSocket =
-                        ServerConnector.connect(serverLocation, 9000,
-                                new RequestCode(RequestCode.Code.GET_LATEST_MESSAGES,
-                                        new AuthTokenManager(getActivity()).getClientToken()));
+                RESTManager restManager = RESTManager.getManager();
+                messages = restManager.restInterface.getNewestMessages(session, this.first, this.last).messages;
 
-                if (objectSocket.rawSocket != null)
-                {
-                    // got a valid ObjectSocket back
+                Log.i("GetNewestMessagesTask", messages.toString());
 
-                    // receive the messages from the server
-                    messages = (List<ChatMessage>) objectSocket.inputStream.readObject();
-                    writeLog(String.format("Received %s messages from the server.", messages.size()));
-                    return messages;
-                }
+                return messages;
             }
             catch (Exception e)
             {
                 e.printStackTrace();
                 return messages;
             }
-
-            return messages;
         }
 
         @Override
-        protected void onPostExecute(List<ChatMessage> chatMessages)
+        protected void onPostExecute(List<Message> messages)
         {
             // set our ArrayList to the one we got from the server and
             // notify the adapter that the data set has changed
 
-            messagesToDisplay = chatMessages;
+            messagesToDisplay = messages;
             adapter = new ChatListAdapter(getActivity(), messagesToDisplay, false);
             adapter.notifyDataSetChanged();
             messageList.setAdapter(adapter);
@@ -73,7 +74,7 @@ public class MessagesFragment extends Fragment
     }
 
     ListView messageList;
-    List<ChatMessage> messagesToDisplay = new ArrayList<ChatMessage>();
+    List<Message> messagesToDisplay = new ArrayList<Message>();
     ChatListAdapter adapter;
 
     GetNewestMessagesTask getNewestMessagesTask;
@@ -86,10 +87,10 @@ public class MessagesFragment extends Fragment
                 R.layout.fragment_messages, container, false);
 
         this.messageList = (ListView) rootView.findViewById(R.id.messageList);
-        this.adapter = new ChatListAdapter(getActivity(), this.messagesToDisplay, true);
-        this.messageList.setAdapter(adapter);
+//        this.adapter = new ChatListAdapter(getActivity(), this.messagesToDisplay, true);
+//        this.messageList.setAdapter(adapter);
 
-        this.getNewestMessagesTask = new GetNewestMessagesTask();
+        this.getNewestMessagesTask = new GetNewestMessagesTask(0, 20);
         this.getNewestMessagesTask.execute();
 
         return rootView;

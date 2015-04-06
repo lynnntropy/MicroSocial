@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Name"
+        android:id="@+id/userFullName"
+        android:textSize="15dp"
+        android:textColor="#212121"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/userAvatar"
+        android:layout_toEndOf="@+id/userAvatar"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Full status text goes here"
+        android:id="@+id/statusText"
+        android:textColor="#555"
+        android:layout_below="@+id/userAvatar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dp"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/userAvatar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="a week ago"
+        android:id="@+id/statusTime"
+        android:layout_below="@+id/userFullName"
+        android:layout_toRightOf="@+id/userAvatar"
+        android:layout_toEndOf="@+id/userAvatar"/>
+
+</RelativeLayout>

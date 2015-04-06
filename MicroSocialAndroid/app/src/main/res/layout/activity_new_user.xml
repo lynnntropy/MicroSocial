@@ -71,45 +71,57 @@
     </RelativeLayout>
 
 
-
-    <com.pnikosis.materialishprogress.ProgressWheel
-        android:id="@+id/spinner"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        wheel:barColor="#FFFFFF"
-        wheel:progressIndeterminate="true" >
-
-    </com.pnikosis.materialishprogress.ProgressWheel>
-
     <com.rengwuxian.materialedittext.MaterialEditText
         app:met_baseColor="#FFFFFF"
         app:met_primaryColor="#FFFFFF"
         app:met_floatingLabel="highlight"
         android:hint="Server Location (IP)"
-        android:visibility="invisible"
 
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/serverIp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"/>
+        android:layout_marginTop="190dp"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_baseColor="#FFFFFF"
+        app:met_primaryColor="#FFFFFF"
+        app:met_floatingLabel="highlight"
+        android:hint="Full Name"
+
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/fullName"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:met_baseColor="#FFFFFF"
+        app:met_primaryColor="#FFFFFF"
+        app:met_floatingLabel="highlight"
+        android:hint="Email"
+
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/email"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="130dp"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         app:met_baseColor="#FFFFFF"
         app:met_primaryColor="#FFFFFF"
         app:met_floatingLabel="highlight"
         android:hint="Username"
-        android:visibility="invisible"
 
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/username"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="210dp"/>
+        android:layout_marginTop="250dp"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         app:met_baseColor="#FFFFFF"
@@ -117,48 +129,24 @@
         app:met_floatingLabel="highlight"
         android:hint="Password"
         android:inputType="textPassword"
-        android:visibility="invisible"
 
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:id="@+id/password"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="270dp"/>
-
-    <!--<com.gc.materialdesign.views.ButtonRectangle-->
-        <!--android:id="@+id/connectButton"-->
-        <!--android:layout_width="130dp"-->
-        <!--android:layout_height="60dp"-->
-        <!--android:background="#EEEEEE"-->
-        <!--android:text="Connect"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_below="@id/password"-->
-        <!--android:layout_marginTop="15dp"/>-->
+        android:layout_marginTop="310dp"/>
 
     <info.hoang8f.widget.FButton
         android:id="@+id/connectButton"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="40dp"
-        android:visibility="invisible"
 
         fbutton:buttonColor="@color/text_color_white"
-        android:text="Connect"
+        android:text="Register and Connect"
         android:layout_centerHorizontal="true"
 
-        android:layout_marginTop="350dp"/>
-
-    <info.hoang8f.widget.FButton
-        android:id="@+id/newUserButton"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:visibility="invisible"
-
-        fbutton:buttonColor="@color/text_color_white"
-        android:text="New user?"
-        android:layout_centerHorizontal="true"
-
-        android:layout_marginTop="400dp"/>
+        android:layout_marginTop="390dp"/>
 
 
 </RelativeLayout>

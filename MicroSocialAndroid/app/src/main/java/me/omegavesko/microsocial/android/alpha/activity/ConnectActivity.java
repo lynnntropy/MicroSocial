@@ -1,6 +1,8 @@
 package me.omegavesko.microsocial.android.alpha.activity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -8,163 +10,208 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pnikosis.materialishprogress.ProgressWheel;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import info.hoang8f.widget.FButton;
-import me.omegavesko.microsocial.android.alpha.AuthToken;
-import me.omegavesko.microsocial.android.alpha.NetworkIdent;
-import me.omegavesko.microsocial.android.alpha.NetworkInfo;
-import me.omegavesko.microsocial.android.alpha.adapter.NetworkListAdapter;
-import me.omegavesko.microsocial.android.alpha.ObjectSocket;
 import me.omegavesko.microsocial.android.alpha.R;
-import me.omegavesko.microsocial.android.alpha.RequestCode;
-import me.omegavesko.microsocial.android.alpha.ServerConnector;
+import me.omegavesko.microsocial.android.alpha.network.RESTManager;
+import me.omegavesko.microsocial.android.alpha.schema.CheckSession;
+import me.omegavesko.microsocial.android.alpha.schema.LoginAttempt;
+import retrofit.client.Response;
 
-/**
- * Created by Veselin on 1/6/2015.
- */
 public class ConnectActivity extends ActionBarActivity
 {
-    class FindNetworksTask extends AsyncTask<Void, int[], List<NetworkInfo>>
+    Activity connectActivity = this;
+
+    @InjectView(R.id.main_toolbar)
+    Toolbar mainToolbar;
+    @InjectView(R.id.currentHotspotName)
+    TextView currentHotspotName;
+    @InjectView(R.id.currentHotspotLabel)
+    TextView currentHotspotLabel;
+    @InjectView(R.id.changeHotspot)
+    FButton changeHotspot;
+    @InjectView(R.id.relativeLayout2)
+    RelativeLayout relativeLayout2;
+    @InjectView(R.id.spinner)
+    ProgressWheel spinner;
+    @InjectView(R.id.serverIp)
+    MaterialEditText serverIp;
+    @InjectView(R.id.username)
+    MaterialEditText username;
+    @InjectView(R.id.password)
+    MaterialEditText password;
+    @InjectView(R.id.connectButton)
+    FButton connectButton;
+    @InjectView(R.id.newUserButton)
+    FButton newUserButton;
+
+    class AttemptLoginTask extends AsyncTask<LoginAttempt, Void, Integer>
     {
-        @Override
-        protected List<NetworkInfo> doInBackground(Void... params)
+        String IP, username, password;
+
+        AttemptLoginTask(String IP, String username, String password)
         {
-            networksFound.clear();
+            this.IP = IP;
+            this.username = username;
+            this.password = password;
+        }
 
-            // make sure the scanning UI is visible
-            runOnUiThread(new Runnable()
+        @Override
+        protected Integer doInBackground(LoginAttempt... params)
+        {
+            RESTManager restManager = RESTManager.getManager();
+            Response loginResponse = restManager.restInterface.login(new LoginAttempt(username, password));
+
+            if (loginResponse.getStatus() != 200)
             {
-                @Override
-                public void run()
-                {
-                    networkList.animate().alpha(0f).setDuration(400).setListener(null);
-
-                    spinner.animate().alpha(1f).setDuration(500).setListener(null);
-                    hostNumber.animate().alpha(1f).setDuration(500).setListener(null);
-                    networksFoundLabel.animate().alpha(1f).setDuration(500).setListener(null);
-                    stopScanningButton.animate().alpha(1f).setDuration(500).setListener(null);
-                }
-            });
-
-            // get our IP address
-
-            WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-            String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-
-            // remove the last octet from the IP
-            String[] octets = ip.split("\\.");
-
-            // start at 95 for dev purposes!
-            // TODO: Set to 0 on alpha/beta/release
-            for (int i = 95; i < 255; i++)
+                // failure
+                return null;
+            } else
             {
-                if (!isCancelled())
+                // success
+                try
                 {
-                    try
-                    {
-                        // try to connect to every host in our /24 subnet
-                        String currentIp = String.format("%s.%s.%s.%d", octets[0], octets[1], octets[2], i);
-                        writeLog(String.format("Scanning for networks on host %s", currentIp));
-                        publishProgress(new int[]{i});
+                    String responseBody = inputStreamToString(loginResponse.getBody().in());
+                    Log.i("LoginResponse", "Response body: " + responseBody);
 
-                        ObjectSocket objectSocket = ServerConnector.connect(currentIp, 9000, new RequestCode(RequestCode.Code.GET_NETWORK_INFO, new AuthToken()));
+                    JSONObject jsonObject = new JSONObject(responseBody);
 
-                        // Implemented a serverside request handler that returns the name of the network.
-
-                        if (objectSocket.rawSocket != null)
-                        {
-                            // found a network
-                            NetworkIdent networkIdent = (NetworkIdent) objectSocket.inputStream.readObject();
-                            networksFound.add(new NetworkInfo(networkIdent.networkName, currentIp, 9000));
-
-                            writeLog(String.format("Found network %s at %s", networkIdent.networkName, currentIp));
-                            publishProgress(new int[]{i});
-
-                        }
-                        else
-                        {
-                            // not a valid network host, move on
-                        }
-                    } catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                else
+                    int session = Integer.parseInt(jsonObject.getString("session_id"));
+                    return session;
+                } catch (Exception e)
                 {
+                    Log.e("JSON", "e", e);
                     return null;
                 }
             }
-
-            return null;
         }
 
         @Override
-        protected void onProgressUpdate(int[]... currentHost)
+        protected void onPostExecute(Integer integer)
         {
-            listAdapter.notifyDataSetChanged();
+            Log.i("Login", String.format("Login successful, session ID [%d]", integer));
 
-            hostNumber.setText(String.format("Scanning host %d of 255", currentHost[0][0] + 1));
-            networksFoundLabel.setText(String.format("Networks found: %d", networksFound.size()));
+            // go to main activity
+
+            if (integer != null)
+            {
+                // login success, open the main activity
+                SharedPreferences storedNetworkSettings = getSharedPreferences("lastNetwork", 0);
+                SharedPreferences.Editor editor = storedNetworkSettings.edit();
+                editor.putString("username", username);
+                editor.putInt("session", integer);
+                editor.putString("ip", this.IP);
+                editor.commit();
+
+                Intent intent = new Intent(connectActivity, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            else
+            {
+                // failure
+//                switchToLoginForm();
+            }
         }
 
         @Override
-        protected void onPostExecute(List<NetworkInfo> networkInfos)
+        protected void onProgressUpdate(Void... values)
         {
-            spinner.animate().alpha(0f).setDuration(1000).setListener(null);
-            hostNumber.animate().alpha(0f).setDuration(1000).setListener(null);
-            networksFoundLabel.animate().alpha(0f).setDuration(1000).setListener(null);
-            stopScanningButton.animate().alpha(0f).setDuration(1000).setListener(null);
-
-            networkList.animate().alpha(1f).setDuration(1300).setListener(null);
+            super.onProgressUpdate(values);
         }
-
-        void writeLog(String log)
-        {
-            Log.i("FindNetworksTask", log);
-        }
-
     }
 
-    private FButton changeHotspotButton;
-    private TextView hotspotName;
-    private ListView networkList;
+    class CheckSessionTask extends AsyncTask<Void, Void, String>
+    {
+        int session;
 
-    private ProgressWheel spinner;
-    private TextView hostNumber;
-    private TextView networksFoundLabel;
-    private FButton stopScanningButton;
+        CheckSessionTask(int session)
+        {
+            this.session = session;
+        }
 
-    private List<NetworkInfo> networksFound = new ArrayList<NetworkInfo>();
-    private NetworkListAdapter listAdapter;
+        @Override
+        protected String doInBackground(Void... params)
+        {
+            RESTManager restManager = RESTManager.getManager();
+            Response response = restManager.restInterface.checkSession(new CheckSession(this.session));
 
-    private FindNetworksTask findNetworksTask;
+            if (response.getStatus() == 200)
+            {
+                try
+                {
+                    // success
+                    String responseBody = inputStreamToString(response.getBody().in());
+                    JSONObject jsonObject = new JSONObject(responseBody);
+
+                    String username = jsonObject.getString("username");
+                    return username;
+                } catch (Exception e)
+                {
+                    Log.e("CheckSession", "e", e);
+                    return null;
+                }
+            } else
+            {
+                // failure
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String username)
+        {
+            if (username != null)
+            {
+                SharedPreferences sharedPreferences = getSharedPreferences("lastNetwork", 0);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("username", username);
+                editor.commit();
+
+                // go to main activity
+                Intent intent = new Intent(connectActivity, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            else
+            {
+                // invalid session
+                switchToLoginForm();
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values)
+        {
+            super.onProgressUpdate(values);
+        }
+    }
 
     @Override
     protected void onStop()
     {
         super.onStop();
-
-        this.findNetworksTask.cancel(true);
-//        this.finish();
     }
 
     @Override
     protected void onPause()
     {
         super.onPause();
-
-        this.findNetworksTask.cancel(true);
     }
 
     @Override
@@ -173,26 +220,39 @@ public class ConnectActivity extends ActionBarActivity
         super.onResume();
 
         this.refreshSSIDLabel();
-
-        // restart the scanning task
-        this.findNetworksTask = new FindNetworksTask();
-        this.findNetworksTask.execute();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
+        ButterKnife.inject(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mainToolbar);
 
-        this.changeHotspotButton = (FButton) findViewById(R.id.changeHotspot);
-        this.changeHotspotButton.setShadowEnabled(false);
-        this.changeHotspotButton.setCornerRadius(7);
-        this.changeHotspotButton.setTextColor(getResources().getColor(R.color.text_color_dark));
+//        this.connectButton.setTextColor(Color.parseColor("#000000"));
+        this.connectButton.setShadowEnabled(false);
+        this.connectButton.setCornerRadius(7);
+        this.connectButton.setTextColor(getResources().getColor(R.color.text_color_dark));
+        this.connectButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String ip = serverIp.getText().toString().toLowerCase().trim();
+                String inputUsername = username.getText().toString().toLowerCase().trim();
+                String inputPassword = password.getText().toString().toLowerCase().trim();
 
-        this.changeHotspotButton.setOnClickListener(new View.OnClickListener()
+                AttemptLoginTask attemptLoginTask = new AttemptLoginTask(ip, inputUsername, inputPassword);
+                attemptLoginTask.execute();
+            }
+        });
+
+        this.changeHotspot.setShadowEnabled(false);
+        this.changeHotspot.setCornerRadius(7);
+        this.changeHotspot.setTextColor(getResources().getColor(R.color.text_color_dark));
+        this.changeHotspot.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -201,38 +261,63 @@ public class ConnectActivity extends ActionBarActivity
             }
         });
 
-        this.hotspotName = (TextView) findViewById(R.id.currentHotspotName);
-        this.refreshSSIDLabel();
-
-        this.networkList = (ListView) findViewById(R.id.networkList);
-        this.listAdapter = new NetworkListAdapter(this, networksFound);
-        this.networkList.setAdapter(this.listAdapter);
-        this.networkList.setAlpha(0f);
-
-        this.spinner = (ProgressWheel) findViewById(R.id.spinner);
-        this.hostNumber = (TextView) findViewById(R.id.hostNumber);
-        this.networksFoundLabel = (TextView) findViewById(R.id.networksFound);
-
-        this.stopScanningButton = (FButton) findViewById(R.id.stopScanning);
-        this.stopScanningButton.setShadowEnabled(false);
-        this.stopScanningButton.setCornerRadius(9);
-        this.stopScanningButton.setOnClickListener(new View.OnClickListener()
+        this.newUserButton.setShadowEnabled(false);
+        this.newUserButton.setCornerRadius(7);
+        this.newUserButton.setTextColor(getResources().getColor(R.color.text_color_dark));
+        this.newUserButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                findNetworksTask.cancel(true);
-
-                spinner.animate().alpha(0f).setDuration(1000).setListener(null);
-                hostNumber.animate().alpha(0f).setDuration(1000).setListener(null);
-                networksFoundLabel.animate().alpha(0f).setDuration(1000).setListener(null);
-                stopScanningButton.animate().alpha(0f).setDuration(1000).setListener(null);
-
-                networkList.animate().alpha(1f).setDuration(1300).setListener(null);
+                Intent intent = new Intent(connectActivity, NewUserActivity.class);
+                startActivity(intent);
             }
         });
+
+        this.refreshSSIDLabel();
+
+        SharedPreferences storedNetworkSettings = getSharedPreferences("lastNetwork", 0);
+        String storedNetworkIP = storedNetworkSettings.getString("ip", "none");
+
+        if (!storedNetworkIP.equals("none"))
+        {
+            // found stored network settings
+            String storedUsername = storedNetworkSettings.getString("username", "none");
+            int storedSession = storedNetworkSettings.getInt("session", 0);
+
+            new CheckSessionTask(storedSession).execute();
+        }
+        else
+        {
+            // no network info stored
+            switchToLoginForm();
+        }
     }
 
+    private void switchToLoginForm()
+    {
+        this.spinner.animate().alpha(0f).setDuration(500);
+
+        this.serverIp.setVisibility(View.VISIBLE);
+        this.serverIp.setAlpha(0f);
+        this.serverIp.animate().alpha(1f).setDuration(750);
+
+        this.username.setVisibility(View.VISIBLE);
+        this.username.setAlpha(0f);
+        this.username.animate().alpha(1f).setDuration(750);
+
+        this.password.setVisibility(View.VISIBLE);
+        this.password.setAlpha(0f);
+        this.password.animate().alpha(1f).setDuration(750);
+
+        this.connectButton.setVisibility(View.VISIBLE);
+        this.connectButton.setAlpha(0f);
+        this.connectButton.animate().alpha(1f).setDuration(750);
+
+        this.newUserButton.setVisibility(View.VISIBLE);
+        this.newUserButton.setAlpha(0f);
+        this.newUserButton.animate().alpha(1f).setDuration(750);
+    }
 
     private void refreshSSIDLabel()
     {
@@ -242,6 +327,30 @@ public class ConnectActivity extends ActionBarActivity
         Log.i("WifiInfo", wifiInfo.toString());
 
         if (hotspotSSID.contains("unknown ssid")) hotspotSSID = "Not connected.";
-        this.hotspotName.setText(hotspotSSID);
+        this.currentHotspotName.setText(hotspotSSID);
+    }
+
+    public static String inputStreamToString(InputStream inputStream)
+    {
+        try
+        {
+            InputStreamReader is = new InputStreamReader(inputStream);
+            StringBuilder sb = new StringBuilder();
+            BufferedReader br = new BufferedReader(is);
+            String read = br.readLine();
+
+            while (read != null)
+            {
+                //System.out.println(read);
+                sb.append(read);
+                read = br.readLine();
+            }
+
+            return sb.toString();
+        } catch (Exception e)
+        {
+            Log.e("ISToString", "e", e);
+            return null;
+        }
     }
 }

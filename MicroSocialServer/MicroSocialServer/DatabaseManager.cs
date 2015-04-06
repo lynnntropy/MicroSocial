@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 using System.Runtime.InteropServices;
 using MicroSocialServer.Schema;
 
@@ -333,5 +334,89 @@ namespace MicroSocialServer
             reader.Close();
             return messages;
         }
+
+        public List<Message> GetLatestMessages(string user, int first, int last)
+        {
+            var messages = new List<Message>();
+
+            var sql = String.Format(
+                    @"SELECT username
+                      FROM Users
+                      WHERE 1                      
+                    ");
+
+            var command = new SQLiteCommand(sql, _databaseConnection);
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var username = (string) reader["username"];
+
+                var userSql = String.Format(
+                            @"SELECT *
+                            FROM Messages
+                            WHERE (fromUser = '{0}' AND toUser = '{1}')
+                            OR (fromUser = '{1}' AND toUser = '{0}')
+                            ORDER BY ID DESC
+                            LIMIT 1
+                            ", user, username);
+
+                var userCommand = new SQLiteCommand(userSql, _databaseConnection);
+                var userReader = userCommand.ExecuteReader();
+
+                while (userReader.Read())
+                {
+                    var message = new Message();
+                    message.senderName = (string)userReader["fromUser"];
+                    message.recipientName = (string)userReader["toUser"];
+                    message.time = (DateTime)userReader["time"];
+                    message.messageBody = (string)userReader["message"];
+
+                    var emailSql = String.Format(
+                    @"SELECT email
+                    FROM Users 
+                    WHERE username = '{0}'",
+                    message.senderName);
+
+                    var fullNameSql = String.Format(
+                    @"SELECT full_name
+                    FROM Users
+                    WHERE username = '{0}'",
+                    message.senderName == user ? message.recipientName : message.senderName);
+
+                    var emailCommand = new SQLiteCommand(emailSql, _databaseConnection);
+                    var emailReader = emailCommand.ExecuteReader();
+                    emailReader.Read();
+                    message.senderEmail = (string)emailReader["email"];
+                    emailReader.Close();
+
+                    var fullNameCommand = new SQLiteCommand(fullNameSql, _databaseConnection);
+                    var fullNameReader = fullNameCommand.ExecuteReader();
+                    fullNameReader.Read();
+                    message.displayName = (string)fullNameReader["full_name"];
+                    fullNameReader.Close();
+
+                    messages.Add(message);
+                }
+
+                userReader.Close();
+            }
+
+            reader.Close();
+
+            if (first + 1 > messages.Count)
+            {
+                return new List<Message>(); // return an empty list since we're out of bounds
+            }
+            else if (last + 1 > messages.Count)
+            {
+                return messages.GetRange(first, messages.Count - first);
+            }
+            else
+            {
+                return messages.GetRange(first, last - first);
+            }
+        }
+
     }
 }
