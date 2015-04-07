@@ -7,6 +7,7 @@ import me.omegavesko.microsocial.android.alpha.schema.LoginAttempt;
 import me.omegavesko.microsocial.android.alpha.schema.Message;
 import me.omegavesko.microsocial.android.alpha.schema.NewestMessages;
 import me.omegavesko.microsocial.android.alpha.schema.OutboundMessage;
+import me.omegavesko.microsocial.android.alpha.schema.OutboundStatus;
 import me.omegavesko.microsocial.android.alpha.schema.ReceivedFeed;
 import me.omegavesko.microsocial.android.alpha.schema.ReceivedMessages;
 import me.omegavesko.microsocial.android.alpha.schema.RegisterAttempt;
@@ -43,10 +44,16 @@ public interface RESTInterface
     @GET("/getUsers")
     UserList listUsers();
 
+    @POST("/session/getUser")
+    User getUserFromSession(@Body CheckSession checkSession);
+
     // feed/status methods
 
     @GET("/feed")
     ReceivedFeed getFeed(@Query("first") int first, @Query("last") int last);
+
+    @POST("/status")
+    Response sendPost(@Body OutboundStatus outboundStatus);
 
     // messaging methods
 

@@ -1,6 +1,7 @@
 package me.omegavesko.microsocial.android.alpha.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -98,8 +100,14 @@ public class MessageActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(List<Message> messages)
         {
-            MessageActivity.this.chatMessages.addAll(0, messages);
+            int scrollPosition = messageListView.getFirstVisiblePosition();
+            View v = messageListView.getChildAt(0);
+            int top = (v == null) ? 0 : (v.getTop() - messageListView.getPaddingTop());
+
+            MessageActivity.this.chatMessages.addAll(messages);
             messageListAdapter.notifyDataSetChanged();
+
+            messageListView.setSelectionFromTop(scrollPosition, top);
 
             // fade the wheel out
             if (progressWheel.getAlpha() > 0)
@@ -180,6 +188,8 @@ public class MessageActivity extends ActionBarActivity
     private EditText messageTextField;
     private Button sendButton;
 
+    private String otherUserEmail;
+
     private WebSocketConnection webSocketConnection = new WebSocketConnection();
 
     @Override
@@ -223,21 +233,38 @@ public class MessageActivity extends ActionBarActivity
         Bundle bundle = getIntent().getExtras();
         String userName = null;
         String fullName = null;
+        String email = null;
         if (bundle != null)
         {
             userName = (String) bundle.get("USERNAME");
             fullName = (String) bundle.get("FULLNAME");
+            email = (String) bundle.get("EMAIL");
         }
+
+        this.otherUserEmail = email;
 
         this.otherUserName = userName;
         setTitle(String.format("%s (%s)", fullName, userName));
 
+        View loadMoreView = ((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.chat_loadmore, null, false);
+        loadMoreView.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                getMessagesTask = new GetMessagesTask(otherUserName, chatMessages.size(), chatMessages.size() + 30);
+                getMessagesTask.execute();
+            }
+        });
+//        messageListView.addFooterView(loadMoreView);
+
         this.chatMessages = new ArrayList<Message>();
-        this.messageListAdapter = new MessageListAdapter(MessageActivity.this, MessageActivity.this.chatMessages);
+        this.messageListAdapter = new MessageListAdapter(MessageActivity.this, MessageActivity.this.chatMessages, loadMoreView);
         this.messageListView.setAdapter(messageListAdapter);
 
         this.getMessagesTask = new GetMessagesTask(otherUserName, 0, 30);
         this.getMessagesTask.execute();
+
 
         this.connectWebSocket();
     }
@@ -255,7 +282,8 @@ public class MessageActivity extends ActionBarActivity
                     message,
                     "",
                     username,
-                    otherUserName))
+                    otherUserName,
+                    getSharedPreferences("lastNetwork", 0).getString("email", "")))
                     .execute();
         }
 
@@ -312,7 +340,8 @@ public class MessageActivity extends ActionBarActivity
                                         payload,
                                         "",
                                         otherUserName,
-                                        getSharedPreferences("lastNetwork", 0).getString("username", "none")));
+                                        getSharedPreferences("lastNetwork", 0).getString("username", "none"),
+                                        otherUserEmail));
 
                         messageListAdapter.notifyDataSetChanged();
                     }

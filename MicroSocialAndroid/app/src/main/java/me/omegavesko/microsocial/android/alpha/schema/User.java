@@ -17,4 +17,22 @@ public class User
     {
         this.username = username;
     }
+
+    public User(String username, String fullName, String email, String phoneNumber)
+    {
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
