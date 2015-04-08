@@ -70,7 +70,7 @@ public class NewUserActivity extends ActionBarActivity
         @Override
         protected Integer doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(NewUserActivity.this);
             Response response = restManager.restInterface.registerUser(new RegisterAttempt(username, password, fullName, email));
 
             if (response.getStatus() == 200)

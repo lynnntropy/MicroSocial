@@ -65,7 +65,7 @@ public class MessagesFragment extends Fragment
                 String username = storedNetworkSettings.getString("username", "none");
                 String session = new Integer(storedNetworkSettings.getInt("session", 0)).toString();
 
-                RESTManager restManager = RESTManager.getManager();
+                RESTManager restManager = RESTManager.getManager(getActivity());
                 messages = restManager.restInterface.getNewestMessages(session, this.first, this.last).messages;
 
                 Log.i("GetNewestMessagesTask", messages.toString());
@@ -100,7 +100,7 @@ public class MessagesFragment extends Fragment
         {
             List<String> names = new ArrayList<String>();
 
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             UserList userList = restManager.restInterface.listUsers();
 
             this.users = userList.users;

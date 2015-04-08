@@ -62,7 +62,7 @@ public class TimelineFragment extends Fragment
         @Override
         protected List<me.omegavesko.microsocial.android.alpha.schema.Status> doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             return restManager.restInterface.getFeed(this.first, this.last).feed;
         }
 
@@ -95,7 +95,7 @@ public class TimelineFragment extends Fragment
         @Override
         protected Response doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             return restManager.restInterface.sendPost(
                     new OutboundStatus(
                             Integer.toString(getActivity().getSharedPreferences("lastNetwork", 0).getInt("session", 0)),

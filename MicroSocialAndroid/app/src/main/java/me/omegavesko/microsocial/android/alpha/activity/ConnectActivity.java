@@ -3,6 +3,7 @@ package me.omegavesko.microsocial.android.alpha.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -74,14 +77,30 @@ public class ConnectActivity extends ActionBarActivity
         @Override
         protected Integer doInBackground(LoginAttempt... params)
         {
-            RESTManager restManager = RESTManager.getManager();
-            Response loginResponse = restManager.restInterface.login(new LoginAttempt(username, password));
+            SharedPreferences sharedPreferences = getSharedPreferences("lastNetwork", 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("ip", this.IP);
+            editor.commit();
 
-            if (loginResponse.getStatus() != 200)
+            RESTManager.refreshServerLocation(ConnectActivity.this);
+            RESTManager restManager = RESTManager.getManager(ConnectActivity.this);
+            Response loginResponse;
+            try
+            {
+                loginResponse = restManager.restInterface.login(new LoginAttempt(username, password));
+            }
+            catch (Exception e)
+            {
+                loginResponse = null;
+                Log.e("AttemptLogin", "e", e);
+            }
+
+            if (loginResponse == null || loginResponse.getStatus() != 200)
             {
                 // failure
                 return null;
-            } else
+            }
+            else
             {
                 // success
                 try
@@ -125,6 +144,16 @@ public class ConnectActivity extends ActionBarActivity
             else
             {
                 // failure
+                new MaterialDialog.Builder(ConnectActivity.this)
+                        .theme(Theme.LIGHT)
+                        .titleColor(Color.BLACK)
+                        .title("Login Unsuccessful")
+                        .content("Your network connection isn't working, " +
+                                 "the server is offline, or your username/password " +
+                                 "was simply wrong.")
+                        .positiveText("OK")
+                        .show();
+
 //                switchToLoginForm();
             }
         }
@@ -148,10 +177,20 @@ public class ConnectActivity extends ActionBarActivity
         @Override
         protected String doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
-            Response response = restManager.restInterface.checkSession(new CheckSession(this.session));
+//            RESTManager.refreshServerLocation(ConnectActivity.this);
+            RESTManager restManager = RESTManager.getManager(ConnectActivity.this);
+            Response response;
+            try
+            {
+                response = restManager.restInterface.checkSession(new CheckSession(this.session));
+            }
+            catch (Exception e)
+            {
+                response = null;
+                Log.e("CheckSession", "e", e);
+            }
 
-            if (response.getStatus() == 200)
+            if (response != null && response.getStatus() == 200)
             {
                 try
                 {
@@ -161,12 +200,14 @@ public class ConnectActivity extends ActionBarActivity
 
                     String username = jsonObject.getString("username");
                     return username;
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Log.e("CheckSession", "e", e);
                     return null;
                 }
-            } else
+            }
+            else
             {
                 // failure
                 return null;

@@ -79,7 +79,7 @@ public class MessageActivity extends ActionBarActivity
                 String userUsername = storedNetworkSettings.getString("username", "none");
                 String session = new Integer(storedNetworkSettings.getInt("session", 0)).toString();
 
-                RESTManager restManager = RESTManager.getManager();
+                RESTManager restManager = RESTManager.getManager(MessageActivity.this);
                 messages = restManager.restInterface.getMessages(session, username, first, last).messages;
 
                 return messages;
@@ -152,7 +152,7 @@ public class MessageActivity extends ActionBarActivity
 
                 OutboundMessage outboundMessage = new OutboundMessage(session, sentMessage.recipientName, sentMessage.messageBody);
 
-                RESTManager restManager = RESTManager.getManager();
+                RESTManager restManager = RESTManager.getManager(MessageActivity.this);
                 Response response = restManager.restInterface.sendMessage(outboundMessage);
 
                 return response.getStatus();

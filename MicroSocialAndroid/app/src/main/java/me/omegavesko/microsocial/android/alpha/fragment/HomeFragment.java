@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment
     {
         protected List<User> doInBackground(Void... input)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             UserList userList = restManager.restInterface.listUsers();
 
             return userList.users;
@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment
         @Override
         protected Void doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             Response response = restManager.restInterface.serverInfo();
 
             try
@@ -136,6 +136,7 @@ public class HomeFragment extends Fragment
 
                 Intent connectActivityIntent = new Intent(getActivity(), ConnectActivity.class);
                 getActivity().startActivity(connectActivityIntent);
+                getActivity().finish();
             }
         });
 

@@ -44,7 +44,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected User doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(MainActivity.this);
 
             return restManager.restInterface.getUserFromSession(
                     new CheckSession(
