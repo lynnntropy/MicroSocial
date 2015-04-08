@@ -70,7 +70,7 @@ body {
     left: 0;
     right: 0;
     top: 0;
-    background-color: #536dfe;
+    background-color: #3F51B5;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.55); }
     body #main .navbar .logo img {
       height: 30px;
@@ -179,6 +179,8 @@ body {
         body #main .navbar .settings .fa:hover {
           opacity: 0.5; }
   body #main #user-list {
+    overflow-y: auto;
+    overflow-x: hidden;
     position: absolute;
     width: 250px;
     top: 60px;
@@ -186,11 +188,16 @@ body {
     background-color: #eee;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     z-index: 10; }
+    body #main #user-list .sidebar-heading {
+      font-size: 20px;
+      padding-bottom: 7px;
+      padding-top: 7px;
+      padding-left: 10px; }
     body #main #user-list .user {
+      opacity: 0.75;
       height: 55px;
       position: relative;
       cursor: pointer;
-      border-bottom: solid 1px rgba(0, 0, 0, 0.009);
       transition: background-color 0.2s ease-out; }
       body #main #user-list .user:hover {
         background-color: rgba(0, 0, 0, 0.075); }
@@ -216,6 +223,40 @@ body {
         left: 55px;
         top: 22px;
         opacity: 0.6; }
+    body #main #user-list #conversation-list .conversation {
+      height: 55px;
+      width: 250px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.2s ease-out; }
+      body #main #user-list #conversation-list .conversation:hover {
+        background-color: rgba(0, 0, 0, 0.075); }
+      body #main #user-list #conversation-list .conversation .avatar {
+        position: absolute;
+        margin: auto;
+        top: 0;
+        bottom: 0;
+        left: 5px; }
+        body #main #user-list #conversation-list .conversation .avatar img {
+          position: absolute;
+          margin: auto;
+          top: 0;
+          bottom: 0;
+          height: 80%;
+          border-radius: 2px; }
+      body #main #user-list #conversation-list .conversation .name {
+        position: absolute;
+        left: 55px;
+        top: 5px; }
+      body #main #user-list #conversation-list .conversation .message {
+        position: absolute;
+        left: 55px;
+        top: 22px;
+        opacity: 0.6;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 170px; }
   body #main #messages-pane {
     position: absolute;
     z-index: 5;
