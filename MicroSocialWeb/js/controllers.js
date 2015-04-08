@@ -1,4 +1,4 @@
-var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives', 'infinite-scroll']);
+var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives', 'infinite-scroll', 'ngAudio']);
 
 microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({
@@ -35,10 +35,12 @@ microSocialApp.config(function($httpProvider) {
 });
 
 
-microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', function ($scope, $rootScope, $http, $log, $location, usSpinnerService)
+microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', 'ngAudio', function ($scope, $rootScope, $http, $log, $location, usSpinnerService, ngAudio)
 {
     $rootScope.baseUrl = $location.absUrl();
     $rootScope.baseUrl = $rootScope.baseUrl.substring(0, $rootScope.baseUrl.length - 1);
+
+    $rootScope.notificationSound = ngAudio.load('resources/notification.mp3');
 
     $scope.$on('logoutSuccessful', function (event)
     {
@@ -515,6 +517,9 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
             if (conversationStarted)
             {
                 $scope.getMessages(0, 0, false);
+
+                // play message sound
+                $rootScope.notificationSound.play();
             }
             else
             {
