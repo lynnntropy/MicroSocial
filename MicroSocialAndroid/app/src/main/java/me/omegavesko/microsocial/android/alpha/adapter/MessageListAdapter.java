@@ -50,7 +50,8 @@ public class MessageListAdapter extends ArrayAdapter<Message>
         }
         else
         {
-            final String userName = new AuthTokenManager(getContext()).getClientToken().username;
+//            final String userName = new AuthTokenManager(getContext()).getClientToken().username;
+            final String userName = getContext().getSharedPreferences("lastNetwork", 0).getString("username", "none");
             final Message chatMessage = getItem(super.getCount() - 1 - (position - 1)); // reverse list order
 
             Message previousMessage;

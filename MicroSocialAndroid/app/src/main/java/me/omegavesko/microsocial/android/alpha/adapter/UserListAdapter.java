@@ -86,14 +86,14 @@ public class UserListAdapter extends ArrayAdapter<User>
         TextView userNameView = (TextView) view.findViewById(R.id.userName);
         userNameView.setText(data.get(position).fullName);
 
-        view.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                openContactPage(data.get(position));
-            }
-        });
+//        view.setOnClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                openContactPage(data.get(position));
+//            }
+//        });
 
         return view;
     }

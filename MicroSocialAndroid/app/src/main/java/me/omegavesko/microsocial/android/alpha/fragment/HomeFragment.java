@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment
             userListView.setAdapter(adapter);
 
             // dev
-            Toast.makeText(getActivity().getApplicationContext(), "Users refreshed!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity().getApplicationContext(), "Users refreshed!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -140,7 +140,7 @@ public class HomeFragment extends Fragment
             }
         });
 
-        Toast.makeText(getActivity().getApplicationContext(), "Refreshing users from server.. ", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity().getApplicationContext(), "Refreshing users from server.. ", Toast.LENGTH_SHORT).show();
         new GetNetworkInfoTask().execute();
         new RefreshUsersTask().execute();
 
