@@ -1,4 +1,4 @@
-var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives', 'infinite-scroll']);
+var microSocialApp = angular.module('microSocial', ['ngAnimate', 'angularSpinner', 'md5', 'ui.gravatar', 'luegg.directives', 'infinite-scroll', 'ngAudio']);
 
 microSocialApp.config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({
@@ -25,7 +25,7 @@ angular.module('ui.gravatar').config([
     'gravatarServiceProvider', function(gravatarServiceProvider) {
         gravatarServiceProvider.defaults = {
             size: 100,
-            "default": 'retro'  // default for missing avatars
+            "default": 'mm'  // default for missing avatars
         };
     }
 ]);
@@ -35,10 +35,12 @@ microSocialApp.config(function($httpProvider) {
 });
 
 
-microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', function ($scope, $rootScope, $http, $log, $location, usSpinnerService)
+microSocialApp.controller('LoginController', ['$scope', '$rootScope', '$http', '$log', '$location', 'usSpinnerService', 'ngAudio', function ($scope, $rootScope, $http, $log, $location, usSpinnerService, ngAudio)
 {
     $rootScope.baseUrl = $location.absUrl();
     $rootScope.baseUrl = $rootScope.baseUrl.substring(0, $rootScope.baseUrl.length - 1);
+
+    $rootScope.notificationSound = ngAudio.load('resources/notification.mp3');
 
     $scope.$on('logoutSuccessful', function (event)
     {
@@ -246,6 +248,7 @@ microSocialApp.controller('UserListController', ['$scope', '$rootScope', '$http'
         .success(function (data, status, headers, config)
         {
             $scope.users = data.users;
+            $rootScope.users = data.users;
             $log.info($scope.users);
 
         }).error(function (data, status, headers, config)
@@ -514,6 +517,9 @@ microSocialApp.controller('MessagesController', ['$scope', '$rootScope', '$http'
             if (conversationStarted)
             {
                 $scope.getMessages(0, 0, false);
+
+                // play message sound
+                $rootScope.notificationSound.play();
             }
             else
             {
@@ -568,6 +574,8 @@ microSocialApp.controller('NavbarController', ['$scope', '$rootScope', '$http', 
         {
             $log.info(data);
             $rootScope.userProfile = data;
+
+            $rootScope.email = $rootScope.userProfile.email;
 
         }).error(function (data, status, headers, config)
         {
@@ -629,4 +637,67 @@ microSocialApp.controller('NavbarController', ['$scope', '$rootScope', '$http', 
     {
         $rootScope.settingsOpened = !$rootScope.settingsOpened;
     }
+}]);
+
+microSocialApp.controller('ConversationsController', ['$scope', '$rootScope', '$http', '$log', function($scope, $rootScope, $http, $log)
+{
+    $scope.conversations = [];
+
+    $scope.$on('loginCompleted', function (event)
+    {
+        $http({
+            method: "GET",
+            url: $rootScope.baseUrl + ":9000" + "/newestMessages?session=" + $rootScope.session + "&first=0&last=0"
+        })
+        .success(function (data, status, headers, config)
+        {
+            $log.info(data);
+            $scope.conversations = data.messages;
+
+        }).error(function (data, status, headers, config)
+        {
+            $log.error(status);
+            $log.error(data);
+        });
+    });
+
+    $scope.getDisplayEmail = function(message)
+    {
+        if (message.senderEmail == $rootScope.email)
+        {
+            // outbound message
+            // find the email for the other user
+            var otherUserName = message.recipientName;
+
+            for (var i = 0; i < $rootScope.users.length; i++)
+            {
+                if ($rootScope.users[i].username == otherUserName)
+                {
+                    return $rootScope.users[i].email;
+                }
+            }
+        }
+        else
+        {
+            // inbound message
+            return message.senderEmail;
+        }
+    };
+
+    $scope.openConversation = function(conversation)
+    {
+        $log.info("Opening conversation: " + conversation);
+
+        if (conversation.senderName == $rootScope.username)
+        {
+            // outbound message
+            $scope.openMessages(conversation.recipientName, conversation.displayName);
+        }
+        else
+        {
+            // inbound message
+            $scope.openMessages(conversation.senderName, conversation.displayName);
+        }
+    };
+
 }]);

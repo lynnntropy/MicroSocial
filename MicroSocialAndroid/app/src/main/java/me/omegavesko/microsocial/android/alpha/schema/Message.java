@@ -12,12 +12,13 @@ public class Message
 
     public String displayName;
 
-    public Message(String messageBody, String time, String senderName, String recipientName)
+    public Message(String messageBody, String time, String senderName, String recipientName, String senderEmail)
     {
         this.messageBody = messageBody;
         this.time = time;
         this.senderName = senderName;
         this.recipientName = recipientName;
+        this.senderEmail = senderEmail;
     }
 
     public Message()

@@ -109,6 +109,8 @@ public class ChatListAdapter extends ArrayAdapter<Message>
 
         messageText.setText('"' + message.messageBody + '"');
 
+        final String userEmail = getContext().getSharedPreferences("lastNetwork", 0).getString("email", "none");
+
         view.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -116,14 +118,15 @@ public class ChatListAdapter extends ArrayAdapter<Message>
             {
                 openMessageActivity(
                         message.senderName.equals(userName) ? message.recipientName : message.senderName,
-                        message.displayName);
+                        message.displayName,
+                        message.senderEmail.equals(userEmail)? userEmail : message.senderEmail);
             }
         });
 
         return view;
     }
 
-    void openMessageActivity(String username, String fullname)
+    void openMessageActivity(String username, String fullname, String email)
     {
         Intent intent = new Intent(getContext(), MessageActivity.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -131,6 +134,7 @@ public class ChatListAdapter extends ArrayAdapter<Message>
         // Pack the user's information into the intent so we have something to show
         intent.putExtra("USERNAME", username);
         intent.putExtra("FULLNAME", fullname);
+        intent.putExtra("EMAIL", email);
 
         // start the activity
         getContext().startActivity(intent);

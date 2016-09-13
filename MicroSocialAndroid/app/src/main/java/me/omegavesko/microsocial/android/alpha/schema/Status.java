@@ -12,4 +12,11 @@ public class Status
     {
 
     }
+
+    public Status(User poster, String time, String statusContent)
+    {
+        this.poster = poster;
+        this.time = time;
+        this.statusContent = statusContent;
+    }
 }

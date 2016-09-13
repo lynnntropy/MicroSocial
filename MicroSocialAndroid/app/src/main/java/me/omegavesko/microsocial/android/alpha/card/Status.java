@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 import fr.tkeunebr.gravatar.Gravatar;
 import it.gmariotti.cardslib.library.internal.Card;
 import me.omegavesko.microsocial.android.alpha.R;
@@ -56,7 +59,10 @@ public class Status extends Card
 
         this.userFullName.setText(this.status.poster.fullName);
         this.statusText.setText(this.status.statusContent);
-        this.statusTime.setText(Utils.getRelativeTimeString(Utils.jsonDateTimeToDate(this.status.time)));
+        this.statusTime.setText(Utils.getRelativeTimeString(Utils.jsonDateTimeToDate(this.status.time
+        ), getContext()));
+
+//        );
 
         String gravatarUrl = Gravatar.init().with(this.status.poster.email).size(100).build();
 

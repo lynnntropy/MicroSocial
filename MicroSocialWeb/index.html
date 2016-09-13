@@ -23,6 +23,7 @@
     <script src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
     <script src="bower_components/angular-scroll-glue/src/scrollglue.js"></script>
     <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+    <script src="bower_components/angular-audio/app/angular.audio.js"></script>
 
     <script src="js/jquery.timeago.js"></script>
     <script src="js/controllers.js"></script>
@@ -85,6 +86,21 @@
         </div>
 
         <div id="user-list" ng-controller="UserListController">
+
+            <div class="sidebar-heading">
+                Conversations
+            </div>
+            <div id="conversation-list" ng-controller="ConversationsController">
+                <div class="conversation" ng-repeat="conversation in conversations" ng-click="openConversation(conversation)">
+                    <div class="avatar"><img gravatar-src="'{{getDisplayEmail(conversation)}}'"/></div>
+                    <div class="name">{{ conversation.displayName }}</div>
+                    <div class="message">{{conversation.messageBody}}</div>
+                </div>
+            </div>
+
+            <div class="sidebar-heading">
+                All users
+            </div>
             <div class="user" ng-repeat="user in users" ng-click="openMessages(user.username, user.fullName)">
                 <div class="avatar"><img gravatar-src="'{{user.email}}'"/></div>
                 <div class="name">{{ user.fullName ? user.fullName : user.username }}</div>

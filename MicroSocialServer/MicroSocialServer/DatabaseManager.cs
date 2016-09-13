@@ -404,18 +404,20 @@ namespace MicroSocialServer
 
             reader.Close();
 
-            if (first + 1 > messages.Count)
-            {
-                return new List<Message>(); // return an empty list since we're out of bounds
-            }
-            else if (last + 1 > messages.Count)
-            {
-                return messages.GetRange(first, messages.Count - first);
-            }
-            else
-            {
-                return messages.GetRange(first, last - first);
-            }
+            //if (first + 1 > messages.Count)
+            //{
+            //    return new List<Message>(); // return an empty list since we're out of bounds
+            //}
+            //else if (last + 1 > messages.Count)
+            //{
+            //    return messages.GetRange(first, messages.Count - first);
+            //}
+            //else
+            //{
+            //    return messages.GetRange(first, last - first);
+            //}
+
+            return messages; // disabled the range serverside
         }
 
     }

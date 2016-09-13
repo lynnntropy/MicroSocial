@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment
     {
         protected List<User> doInBackground(Void... input)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             UserList userList = restManager.restInterface.listUsers();
 
             return userList.users;
@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment
             userListView.setAdapter(adapter);
 
             // dev
-            Toast.makeText(getActivity().getApplicationContext(), "Users refreshed!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity().getApplicationContext(), "Users refreshed!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -81,7 +81,7 @@ public class HomeFragment extends Fragment
         @Override
         protected Void doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
+            RESTManager restManager = RESTManager.getManager(getActivity());
             Response response = restManager.restInterface.serverInfo();
 
             try
@@ -136,10 +136,11 @@ public class HomeFragment extends Fragment
 
                 Intent connectActivityIntent = new Intent(getActivity(), ConnectActivity.class);
                 getActivity().startActivity(connectActivityIntent);
+                getActivity().finish();
             }
         });
 
-        Toast.makeText(getActivity().getApplicationContext(), "Refreshing users from server.. ", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity().getApplicationContext(), "Refreshing users from server.. ", Toast.LENGTH_SHORT).show();
         new GetNetworkInfoTask().execute();
         new RefreshUsersTask().execute();
 

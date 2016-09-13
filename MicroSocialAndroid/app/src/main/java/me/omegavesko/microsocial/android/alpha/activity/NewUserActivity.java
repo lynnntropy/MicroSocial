@@ -3,6 +3,7 @@ package me.omegavesko.microsocial.android.alpha.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.json.JSONObject;
@@ -70,15 +73,39 @@ public class NewUserActivity extends ActionBarActivity
         @Override
         protected Integer doInBackground(Void... params)
         {
-            RESTManager restManager = RESTManager.getManager();
-            Response response = restManager.restInterface.registerUser(new RegisterAttempt(username, password, fullName, email));
+            SharedPreferences sharedPreferences = getSharedPreferences("lastNetwork", 0);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("ip", this.serverIP);
+            editor.commit();
 
-            if (response.getStatus() == 200)
+            RESTManager.refreshServerLocation(NewUserActivity.this);
+            RESTManager restManager = RESTManager.getManager(NewUserActivity.this);
+            Response response;
+            try
+            {
+                response = restManager.restInterface.registerUser(new RegisterAttempt(username, password, fullName, email));
+            }
+            catch (Exception e)
+            {
+                Log.e("RegisteraAndConnectTask", e.getMessage());
+                response = null;
+            }
+
+            if (response != null && response.getStatus() == 200)
             {
                 // success
-                Response loginResponse = restManager.restInterface.login(new LoginAttempt(username, password));
+                Response loginResponse;
+                try
+                {
+                    loginResponse = restManager.restInterface.login(new LoginAttempt(username, password));
+                }
+                catch (Exception e)
+                {
+                    Log.e("RegisterAndConnect", "e", e);
+                    loginResponse = null;
+                }
 
-                if (loginResponse.getStatus() == 200)
+                if (loginResponse != null && loginResponse.getStatus() == 200)
                 {
                     // success
                     try
@@ -120,14 +147,25 @@ public class NewUserActivity extends ActionBarActivity
                 SharedPreferences.Editor editor = storedNetworkSettings.edit();
                 editor.putString("username", username);
                 editor.putInt("session", integer);
+                editor.putString("ip", this.serverIP);
                 editor.commit();
 
                 Intent intent = new Intent(newUserActivity, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
             else
             {
                 // failure
+                new MaterialDialog.Builder(NewUserActivity.this)
+                        .theme(Theme.LIGHT)
+                        .titleColor(Color.BLACK)
+                        .title("Registration Unsuccessful")
+                        .content("Your network connection isn't working, " +
+                                 "the server is offline, or you filled out " +
+                                 "the form with invalid data.")
+                        .positiveText("OK")
+                        .show();
             }
         }
     }
@@ -150,11 +188,11 @@ public class NewUserActivity extends ActionBarActivity
             public void onClick(View v)
             {
                 RegisterAndConnectTask registerAndConnectTask = new RegisterAndConnectTask(
-                        fullName.getText().toString(),
-                        email.getText().toString(),
-                        serverIp.getText().toString(),
-                        username.getText().toString(),
-                        password.getText().toString());
+                        fullName.getText().toString().trim(),
+                        email.getText().toString().trim().toLowerCase(),
+                        serverIp.getText().toString().trim().toLowerCase(),
+                        username.getText().toString().trim().toLowerCase(),
+                        password.getText().toString().trim().toLowerCase());
 
                 registerAndConnectTask.execute();
             }

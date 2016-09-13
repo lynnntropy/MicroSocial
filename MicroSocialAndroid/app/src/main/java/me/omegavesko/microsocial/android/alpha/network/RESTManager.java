@@ -1,5 +1,7 @@
 package me.omegavesko.microsocial.android.alpha.network;
 
+import android.content.Context;
+
 import retrofit.RestAdapter;
 
 /**
@@ -8,30 +10,44 @@ import retrofit.RestAdapter;
 public class RESTManager
 {
     public RESTInterface restInterface;
-    private static RESTManager manager = null;
+    private static RESTManager restManager = null;
+    private static RestAdapter restAdapter;
+
+    public String currentNetworkLocation;
 
     protected RESTManager()
     {
 
     }
 
-    public static RESTManager getManager()
+    public static RESTManager getManager(Context context)
     {
-        if (manager == null)
+        if (restManager == null)
         {
-            manager = new RESTManager();
-            manager.init();
+            restManager = new RESTManager();
+            restManager.init(context);
         }
 
-        return manager;
+        return restManager;
     }
 
-    // TODO other methods..
-
-    private void init()
+    public static void refreshServerLocation(Context context)
     {
+        String serverLocation = context.getSharedPreferences("lastNetwork", 0).getString("ip", "192.168.1.1");
+        if (restManager.currentNetworkLocation != serverLocation)
+        {
+            // need to update
+            restManager.init(context);
+        }
+    }
+
+    private void init(Context context)
+    {
+        String serverLocation = context.getSharedPreferences("lastNetwork", 0).getString("ip", "192.168.1.1");
+        this.currentNetworkLocation = serverLocation;
+
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://192.168.1.100:9000") // TODO..
+                .setEndpoint("http://" + serverLocation + ":9000")
                 .build();
 
         this.restInterface = restAdapter.create(RESTInterface.class);
